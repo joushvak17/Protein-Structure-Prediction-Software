@@ -1,7 +1,5 @@
 from Bio.SeqUtils import ProtParamData
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
-import subprocess
-
 
 def calculate_a_acid_composition(sequence):
     protein_analysis = ProteinAnalysis(sequence)
