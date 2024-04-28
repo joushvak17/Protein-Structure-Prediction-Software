@@ -1,22 +1,44 @@
+# Import the needed libraries
 from openmm.app import *
-from openmm.unit import nano, meters, kelvin, pico
+from openmm.unit import nano, kelvin, pico, meters
 from openmm import *
 from sys import stdout
 
+# Input the test PDB file to a PDBFile object
 pdb = PDBFile("PDBTest.pdb")
+
+# Input the force fields that will be used, in this case AMBER14
 forcefield = ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
-system = forcefield.createSystem(pdb.topology, nonbondedMethod=PME,
-                                 nonbondedCutoff=1.0*nano*meters,
+
+# Combine the force field with the molecular topology from the PDB file
+system = forcefield.createSystem(pdb.topology,
+                                 nonbondedMethod=PME,
+                                 nonbondedCutoff=nano*meters,
                                  constraints=HBonds)
-integrator = LangevinMiddleIntegrator(300.0*kelvin, 1.0/pico,
+
+# Create an integrator to use for the equations of motion
+integrator = LangevinMiddleIntegrator(300.0*kelvin,
+                                      1.0/pico,
                                       0.004*pico)
+
+# Combine everything so a Simulation object is created
 simulation = Simulation(pdb.topology, system, integrator)
+
+# Specify the initial atom positions for the simulation
 simulation.context.setPositions(pdb.positions)
+
+# Perform local energy minimization
 simulation.minimizeEnergy()
+
+# Generate the output during from the simulation
 simulation.reporters.append(PDBReporter("output.pdb",
                                         1000))
+
+# Get regular status updates from the simulation
 simulation.reporters.append(StateDataReporter(stdout, 1000,
                                               step=True,
                                               potentialEnergy=True,
                                               temperature=True))
+
+# Run the simulation
 simulation.step(10000)
