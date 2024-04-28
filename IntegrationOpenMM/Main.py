@@ -1,11 +1,11 @@
 # Import the needed libraries
 from openmm.app import *
-from openmm.unit import nano, kelvin, pico, meters
+from openmm.unit import nano, kelvin, pico
 from openmm import *
 from sys import stdout
 
 # Input the test PDB file to a PDBFile object
-pdb = PDBFile("PDBTest.pdb")
+pdb = PDBFile("PDBFix.pdb")
 
 # Input the force fields that will be used, in this case AMBER14
 forcefield = ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
@@ -13,7 +13,7 @@ forcefield = ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
 # Combine the force field with the molecular topology from the PDB file
 system = forcefield.createSystem(pdb.topology,
                                  nonbondedMethod=PME,
-                                 nonbondedCutoff=nano*meters,
+                                 nonbondedCutoff=1.0*nano,
                                  constraints=HBonds)
 
 # Create an integrator to use for the equations of motion
