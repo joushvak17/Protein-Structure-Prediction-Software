@@ -20,3 +20,8 @@ Data Preparation:
 --- 
 - sequences.fasta: File that has the unaligned sequences which are preprocessed
 - aligned_sequences.fasta: File that has the aligned sequences which were done using Clustal Omega
+
+IntegrationOpenMM:
+- IntegrationOpenMM.ipynb: File that integrates OpenMM into the protein structure prediction software
+---
+- PDBTest.pdb: File that contains the PDB test file used for integration testing
