@@ -8,18 +8,18 @@ from sys import stdout
 pdb = PDBFile("PDBFix.pdb")
 
 # Input the force fields that will be used, in this case AMBER14
-forcefield = ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
+forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
 
 # Combine the force field with the molecular topology from the PDB file
 system = forcefield.createSystem(pdb.topology,
                                  nonbondedMethod=PME,
-                                 nonbondedCutoff=None,
+                                 nonbondedCutoff=Quantity(value=1.2, unit=nano*meter),
                                  constraints=HBonds)
 
 # Create an integrator to use for the equations of motion
-integrator = LangevinMiddleIntegrator(300 * kelvin,
-                                      1 / pico,
-                                      0.002 * pico)
+integrator = LangevinMiddleIntegrator(300*kelvin,
+                                      1/Quantity(value=1.0, unit=pico*second),
+                                      Quantity(value=0.002, unit=pico*second))
 
 # Combine everything so a Simulation object is created
 simulation = Simulation(pdb.topology, system, integrator)
