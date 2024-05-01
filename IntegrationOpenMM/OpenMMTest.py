@@ -35,7 +35,8 @@ simulation.reporters.append(PDBReporter("output.pdb",
                                         1000))
 
 # Get regular status updates from the simulation
-simulation.reporters.append(StateDataReporter(stdout, 1000,
+simulation.reporters.append(StateDataReporter(stdout,
+                                              1000,
                                               step=True,
                                               potentialEnergy=True,
                                               temperature=True))
