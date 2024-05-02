@@ -1,4 +1,6 @@
 # Import the needed libraries
+import pandas as pd
+
 from openmm.app import *
 from openmm import *
 from openmm.unit import *
@@ -6,14 +8,21 @@ from sys import stdout
 
 # Input the test PDB file to a PDBFile object
 pdb = PDBFile("PDBFix.pdb")
+pdb_data = pd.read_csv("PDBOpenMMTest.csv")
+pdb_dict = pdb_data.to_dict(orient="records")
 
-# Input the force fields that will be used, in this case AMBER14
-forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
+for entry in pdb_dict:
+    if entry["Experimental"] == "x-ray diffraction":
+        # Input the force fields that will be used, in this case AMBER14
+        forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
+    elif entry["Experimental"] == "neutron diffraction":
+        forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
 
 # Combine the force field with the molecular topology from the PDB file
 system = forcefield.createSystem(pdb.topology,
                                  nonbondedMethod=PME,
-                                 nonbondedCutoff=Quantity(value=1.2, unit=nano*meter),
+                                 nonbondedCutoff=Quantity(value=1.2,
+                                                          unit=nano*meter),
                                  constraints=HBonds)
 
 # Create an integrator to use for the equations of motion
