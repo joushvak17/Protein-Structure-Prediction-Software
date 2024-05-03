@@ -27,20 +27,24 @@ for entry in pdb_data:
         nonbonded_method = CutoffPeriodic
         nonbonded_cutoff = Quantity(value=1.0, unit=nano*meter)
         switch_distance = None
+        constraints = AllBonds
     elif entry["Resolution"] >= 2.60:
         nonbonded_method = LJPME
         nonbonded_cutoff = Quantity(value=1.2, unit=nano*meter)
         switch_distance = Quantity(value=0.9, unit=nano*meter)
+        constraints = None
     else:
         nonbonded_method = PME
         nonbonded_cutoff = Quantity(value=1.0, unit=nano*meter)
         switch_distance = None
+        constraints = HBonds
 
 # Combine the force field with the molecular topology from the PDB file
 system = forcefield.createSystem(pdb.topology,
                                  nonbondedMethod=nonbonded_method,
                                  nonbondedCutoff=nonbonded_cutoff,
-                                 switchDistance=switch_distance)
+                                 switchDistance=switch_distance,
+                                 constraints=constraints)
 
 # Create an integrator to use for the equations of motion
 integrator = LangevinMiddleIntegrator(300*kelvin,
