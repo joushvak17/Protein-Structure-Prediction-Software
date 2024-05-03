@@ -8,21 +8,32 @@ from sys import stdout
 
 # Input the test PDB file to a PDBFile object
 pdb = PDBFile("PDBFix.pdb")
-pdb_data = pd.read_csv("PDBOpenMMTest.csv")
-pdb_dict = pdb_data.to_dict(orient="records")
 
-for entry in pdb_dict:
+# Read the dataset file and turn it into a dictionary
+pdb_data = pd.read_csv("PDBOpenMMTest.csv").to_dict(orient="records")
+
+# Loop through the dictionary
+for entry in pdb_data:
+    # Check to see if the experimental method matches
     if entry["Experimental"] == "x-ray diffraction":
-        # Input the force fields that will be used, in this case AMBER14
-        forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
+        # Input the force fields that will be used, in this case AMBER14 for protein
+        forcefield = ForceField("", "amber14/tip3pfb.xml")
     elif entry["Experimental"] == "neutron diffraction":
-        forcefield = ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
+        # Input the alternative AMBER 14 force field which is provided by OpenMM
+        forcefield = ForceField("amber14/protein.ff15ipq.xml", "amber14/tip4pfb.xml")
+
+    # Decide on the method to use for nonbonded methods based on resolution
+    if entry["Resolution"] <= 1.89:
+        nonbonded_method = CutoffPeriodic
+    elif entry["Resolution"] >= 2.60:
+        nonbonded_method = LJPME
+    else:
+        nonbonded_method = PME
 
 # Combine the force field with the molecular topology from the PDB file
 system = forcefield.createSystem(pdb.topology,
-                                 nonbondedMethod=PME,
-                                 nonbondedCutoff=Quantity(value=1.2,
-                                                          unit=nano*meter),
+                                 nonbondedMethod=nonbonded_method,
+                                 nonbondedCutoff=Quantity(value=1.2, unit=nano*meter),
                                  constraints=HBonds)
 
 # Create an integrator to use for the equations of motion
