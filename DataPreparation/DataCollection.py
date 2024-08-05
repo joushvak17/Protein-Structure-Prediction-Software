@@ -29,16 +29,20 @@ def download_pdb_retry(pdb_id):
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
-# Get the PDB IDs from the CSV file
-with open("PDBDataID.csv", "r") as f:
-    line = f.readline()
-    pdb_ids = line.split(",")
+def main():
+    # Get the PDB IDs from the CSV file
+    with open("PDBDataID.csv", "r") as f:
+        line = f.readline()
+        pdb_ids = line.split(",")
 
-# Print the total number of PDB IDs
-print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
+    # Print the total number of PDB IDs
+    print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
 
-# Download all files from PDB using the IDs that were extracted
-for pdb_id in pdb_ids:
-    download_pdb_retry(pdb_id)
+    # Download all files from PDB using the IDs that were extracted
+    for pdb_id in pdb_ids:
+        download_pdb_retry(pdb_id)
     
-print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("PDB Data")))
+    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("PDBData")))
+
+if __name__ == "__main__":
+    main()
