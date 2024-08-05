@@ -49,7 +49,7 @@ def preprocess_sequence(pdb_files):
     for pdb_file in pdb_files:
         
         # Parse the PDB files 
-        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"PDB Data/{pdb_file}.pdb")
+        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"PDBData/{pdb_file}.pdb")
 
         for model in structure:
             for chain in model:
@@ -107,8 +107,8 @@ def main():
     SeqIO.write(sequences, "FASTAData/Sequences.fasta", "fasta")
 
     # Align the sequences using Clustal Omega
-    in_file = "FASTA Data/Sequences.fasta"
-    out_file = "FASTA Data/Aligned_Sequences.fasta"
+    in_file = "FASTAData/Sequences.fasta"
+    out_file = "FASTAData/Aligned_Sequences.fasta"
     clustal_cline = ClustalOmegaCommandline(infile=in_file, outfile=out_file, verbose=True, auto=True)
 
     try:
