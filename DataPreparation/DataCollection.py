@@ -82,7 +82,8 @@ def preprocess_sequence(pdb_files):
                         continue
 
                     # Convert to one-letter code
-                    # FIXME: Check the docs "AttributeError: module 'Bio.PDB.Polypeptide' has no attribute 'three_to_one'. Did you mean: 'three_to_index'?"
+                    # FIXME: Check the docs "AttributeError: module 'Bio.PDB.Polypeptide' 
+                    # has no attribute 'three_to_one'. Did you mean: 'three_to_index'?"
                     try:
                         sequence += Polypeptide.three_to_one(residue.get_resname())
                     except KeyError:
