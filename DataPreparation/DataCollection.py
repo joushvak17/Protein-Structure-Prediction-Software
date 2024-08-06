@@ -36,6 +36,21 @@ def download_pdb_retry(pdb_id):
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
+def download_pdb():
+    # Get the PDB IDs from the CSV file
+    with open("PDBDataID.csv", "r") as f:
+        line = f.readline()
+        pdb_ids = line.split(",")
+
+    # Print the total number of PDB IDs
+    print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
+
+    # Download all files from PDB using the IDs that were extracted
+    for pdb_id in pdb_ids:
+        download_pdb_retry(pdb_id)
+    
+    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("PDBData")))
+
 # Define a function that will preprocess the sequences
 def preprocess_sequence(pdb_files):
     sequence_records = []
@@ -67,6 +82,7 @@ def preprocess_sequence(pdb_files):
                         continue
 
                     # Convert to one-letter code
+                    # FIXME: Check the docs "AttributeError: module 'Bio.PDB.Polypeptide' has no attribute 'three_to_one'. Did you mean: 'three_to_index'?"
                     try:
                         sequence += Polypeptide.three_to_one(residue.get_resname())
                     except KeyError:
@@ -84,19 +100,8 @@ def preprocess_sequence(pdb_files):
     return sequence_records
 
 def main():
-    # Get the PDB IDs from the CSV file
-    with open("PDBDataID.csv", "r") as f:
-        line = f.readline()
-        pdb_ids = line.split(",")
-
-    # Print the total number of PDB IDs
-    print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
-
-    # Download all files from PDB using the IDs that were extracted
-    for pdb_id in pdb_ids:
-        download_pdb_retry(pdb_id)
-    
-    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("PDBData")))
+    # Download the PDB files
+    download_pdb()
 
     # Preprocess the sequences
     pdb_files_with_extension = os.listdir("PDBData")
