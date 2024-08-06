@@ -4,6 +4,7 @@ import pandas as pd
 from Bio import SeqIO, AlignIO
 from Bio.Align import AlignInfo
 from concurrent.futures import ThreadPoolExecutor
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.LabelExtractionOperations import extract_experimental
 from DataOperations.FeatureExtractionOperations import *
 
@@ -169,6 +170,17 @@ def main():
 
     # Concatenate the dataframes
     df = pd.concat([unaligned_df, aligned_df, label_df], axis=1)
+    
+    # Remove the rows with missing values
+    df.dropna(inplace=True)
+
+    # Encode the experimental methods and normalize the data
+    le = LabelEncoder()
+    df["Experimental"] = le.fit_transform(df["Experimental"])
+
+    scaler = StandardScaler()
+    num_cols = df.select_dtypes(include=["int64", "float64"]).columns
+    df[num_cols] = scaler.fit_transform(df[num_cols])
 
     # Save the dataframe to a csv file
     df.to_csv("Data/Features.csv", index=False)
