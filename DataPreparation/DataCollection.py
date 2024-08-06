@@ -100,8 +100,8 @@ def preprocess_sequence(pdb_files):
     return sequence_records
 
 def main():
-    # Download the PDB files
-    download_pdb()
+    # NOTE: Comment out this line if you have already downloaded the PDB files
+    # download_pdb()
 
     # Preprocess the sequences
     pdb_files_with_extension = os.listdir("PDBData")
