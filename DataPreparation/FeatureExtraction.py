@@ -33,6 +33,8 @@ def extract_data(seq_record):
 
 def main():
     # Define the unaligned dataframe that will have all the calculated feature values
+    # TODO: Some of these features can be removed
+    # - The Net Charge at pH 3.0 and 11.0 can be removed
     unaligned_data = {"ID": [], 
                     "Unaligned Sequence": [], 
                     'A': [], 'R': [], 'N': [], 'D': [],
@@ -42,8 +44,6 @@ def main():
                     'T': [], 'W': [], 'Y': [], 'V': [],
                     "Hydrophobicity (Kyte-Doolittle Scale)": [],
                     "Net Charge at pH 7.0 (Neutral)": [],
-                    "Net Charge at pH 3.0 (Acidic)": [],
-                    "Net Charge at pH 11.0 (Basic)": [],
                     "Isoelectric Point": [],
                     "Molecular Weight": [],
                     "Sequence Length": []} 
@@ -62,12 +62,6 @@ def main():
         
         charge_7 = calculate_polarity(str(seq_record.seq), 7.0)
         unaligned_data["Net Charge at pH 7.0 (Neutral)"].append(charge_7)
-
-        charge_3 = calculate_polarity(str(seq_record.seq), 3.0)
-        unaligned_data["Net Charge at pH 3.0 (Acidic)"].append(charge_3)
-
-        charge_11 = calculate_polarity(str(seq_record.seq), 11.0)
-        unaligned_data["Net Charge at pH 11.0 (Basic)"].append(charge_11)
         
         isolectric_values = calculate_pI(str(seq_record.seq))
         unaligned_data["Isoelectric Point"].append(isolectric_values)
@@ -122,6 +116,7 @@ def main():
     average_gap_length = sum(all_gaps) / len(all_gaps) if all_gaps else 0
 
     # Define the aligned dataframe that will have the calculated feature values
+    # TODO: Some of these features can be removed
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
                     "Consensus Sequence": [str(consensus)] * num_sequences, 
@@ -156,11 +151,12 @@ def main():
         aligned_data["Mutations from Consensus"].append(mutations_from_consensus)
 
     # Define the label dataframe that will be the prediction outputs
-    label_data = {"ID": [],
-                "Experimental": [],
-                "Resolution": [],
-                "R Value": [],
-                "R Free": []}
+    # TODO: Some of these features can be removed
+    label_data = {"ID": [], 
+                  "Experimental": [], 
+                  "Resolution": [],
+                  "R Value": [],
+                  "R Free": []}
 
     with (ThreadPoolExecutor() as executor):
         for seq_id, experimental, res, r_value, r_free in executor.map(extract_data, 
