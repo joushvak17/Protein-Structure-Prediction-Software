@@ -1,3 +1,5 @@
 DataPreparation/PDBData
 DataPreparation/FASTAData
+
 .vscode
+__pycache__
