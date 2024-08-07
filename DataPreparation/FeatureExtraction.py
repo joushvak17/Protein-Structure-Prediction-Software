@@ -33,8 +33,7 @@ def extract_data(seq_record):
 
 def main():
     # Define the unaligned dataframe that will have all the calculated feature values
-    # TODO: Some of these features can be removed
-    # - The Net Charge at pH 3.0 and 11.0 can be removed
+    # - The Net Charge at pH 3.0 and 11.0 have beeen removed
     unaligned_data = {"ID": [], 
                     "Unaligned Sequence": [], 
                     'A': [], 'R': [], 'N': [], 'D': [],
@@ -72,13 +71,8 @@ def main():
         sequence_length = len(seq_record.seq)
         unaligned_data["Sequence Length"].append(sequence_length)    
 
-    # Define the alinged dataframe that will have all the calculated feature values
-
     # Read the alignment sequences
     alignment = AlignIO.read("DataPreparation/FASTAData/Aligned_Sequences.fasta", "fasta")
-
-    # Calculate consensus
-    consensus = AlignInfo.SummaryInfo(alignment).dumb_consensus()
 
     # Calculate Conservation Score
     start = 0
@@ -117,9 +111,9 @@ def main():
 
     # Define the aligned dataframe that will have the calculated feature values
     # TODO: Some of these features can be removed
+    # - The Consensus Sequence can be removed
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
-                    "Consensus Sequence": [str(consensus)] * num_sequences, 
                     "Conservation Scores": [conservation_score] * num_sequences,
                     "Percentage of Gaps Per Position": [perc_gap_per_position] * num_sequences,
                     "Total Gaps in Alignment": [total_gaps] * num_sequences,
