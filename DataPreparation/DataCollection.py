@@ -11,13 +11,14 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Align.Applications import ClustalOmegaCommandline
 from Bio import SeqIO
 
+
 # Define a function that will download a PDB file given a PDB ID
 def download_pdb(pdb_id):
     # Define the URL to download the PDB file
     url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
     
     # Define the path to save the PDB file
-    path = f"PDBData/{pdb_id}.pdb"
+    path = f"DataPreparation/PDBData/{pdb_id}.pdb"
     
     # Download the PDB file
     response = requests.get(url)
@@ -38,7 +39,7 @@ def download_pdb_retry(pdb_id):
 
 def get_pdb_id():
     # Get the PDB IDs from the CSV file
-    with open("PDBDataID.csv", "r") as f:
+    with open("DataPreparation/PDBDataID.csv", "r") as f:
         line = f.readline()
         pdb_ids = line.split(",")
 
@@ -49,7 +50,8 @@ def get_pdb_id():
     for pdb_id in pdb_ids:
         download_pdb_retry(pdb_id)
     
-    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("PDBData")))
+    print("The total length of the IDs that were able to be downloaded is: ", 
+          len(os.listdir("DataPreparation/PDBData")))
 
 # Define a function that will preprocess the sequences
 def preprocess_sequence(pdb_files):
@@ -104,19 +106,19 @@ def preprocess_sequence(pdb_files):
 
 def main():
     # NOTE: Comment out this line if you have already downloaded the PDB files
-    # get_pdb_id()
+    get_pdb_id()
     
     # Preprocess the sequences
-    pdb_files_with_extension = os.listdir("PDBData")
+    pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
     pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")] 
     sequences = preprocess_sequence(pdb_files)
 
     # Write the sequences to a FASTA file
-    SeqIO.write(sequences, "FASTAData/Sequences.fasta", "fasta")
+    SeqIO.write(sequences, "DataPreparation/FASTAData/Sequences.fasta", "fasta")
 
     # Align the sequences using Clustal Omega
-    in_file = "FASTAData/Sequences.fasta"
-    out_file = "FASTAData/Aligned_Sequences.fasta"
+    in_file = "DataPreparation/FASTAData/Sequences.fasta"
+    out_file = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
     clustal_cline = ClustalOmegaCommandline(infile=in_file, outfile=out_file, verbose=True, auto=True)
 
     try:
