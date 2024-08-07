@@ -14,7 +14,7 @@ def extract_data(seq_record):
             r_free = None
             seq_id = seq_record.id
             base_pdb_id = seq_id.split("_")[0]
-            pdb_file = f"PDB Data/{base_pdb_id}.pdb"
+            pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
             experimental, res = extract_experimental(pdb_file)
             
             with open(pdb_file, "r") as f:
@@ -48,12 +48,12 @@ def main():
                     "Molecular Weight": [],
                     "Sequence Length": []} 
 
-    for seq_record in SeqIO.parse("FASTAData/Sequences.fasta", "fasta"):
-        
+    for seq_record in SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", "fasta"):
         unaligned_data["ID"].append(seq_record.id)
         unaligned_data["Unaligned Sequence"].append(str(seq_record.seq))
         
         aa_composition = calculate_a_acid_composition(str(seq_record.seq))
+        
         for amino_acid, percent in aa_composition.items():
             unaligned_data[amino_acid].append(percent)
         
@@ -81,7 +81,7 @@ def main():
     # Define the alinged dataframe that will have all the calculated feature values
 
     # Read the alignment sequences
-    alignment = AlignIO.read("FASTA Data/Aligned_Sequences.fasta", "fasta")
+    alignment = AlignIO.read("DataPreparation/FASTAData/Aligned_Sequences.fasta", "fasta")
 
     # Calculate consensus
     consensus = AlignInfo.SummaryInfo(alignment).dumb_consensus()
@@ -90,7 +90,9 @@ def main():
     start = 0
     end = alignment.get_alignment_length()
     e_freq_table = {char: 0.05 for char in "ACDEFGHIKLMNPQRSTVWY"}
-    conservation_score = AlignInfo.SummaryInfo(alignment).information_content(start, end, e_freq_table=e_freq_table, chars_to_ignore=["-"])
+    conservation_score = AlignInfo.SummaryInfo(alignment).information_content(start, end, 
+                                                                              e_freq_table=e_freq_table, 
+                                                                              chars_to_ignore=["-"])
 
     # Initialize variables to store gap statistics
     alignment_length = end
@@ -132,8 +134,13 @@ def main():
                     "Percentage Gaps": [],
                     "Mutations from Consensus": []}
 
+    # Add a counter variable
+    counter = 0
+
     for seq_record in alignment:
-        
+        # Increment the counter
+        counter += 1
+
         aligned_data["ID"].append(seq_record.id)
         aligned_data["Aligned Sequence"].append(str(seq_record.seq))
         
@@ -156,7 +163,9 @@ def main():
                 "R Free": []}
 
     with (ThreadPoolExecutor() as executor):
-        for seq_id, experimental, res, r_value, r_free in executor.map(extract_data, SeqIO.parse("FASTA Data/Sequences.fasta", "fasta")):
+        for seq_id, experimental, res, r_value, r_free in executor.map(extract_data, 
+                                                                       SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", 
+                                                                                   "fasta")):
             label_data["ID"].append(seq_id)
             label_data["Experimental"].append(experimental)
             label_data["Resolution"].append(res)
@@ -183,7 +192,7 @@ def main():
     df[num_cols] = scaler.fit_transform(df[num_cols])
 
     # Save the dataframe to a csv file
-    df.to_csv("Data/Features.csv", index=False)
+    df.to_csv("DataPreparation/Features.csv", index=False)
 
 if __name__ == "__main__":
     main()
