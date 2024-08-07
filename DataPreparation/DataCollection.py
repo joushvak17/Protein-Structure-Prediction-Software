@@ -36,7 +36,7 @@ def download_pdb_retry(pdb_id):
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
-def download_pdb():
+def get_pdb_id():
     # Get the PDB IDs from the CSV file
     with open("PDBDataID.csv", "r") as f:
         line = f.readline()
@@ -82,10 +82,12 @@ def preprocess_sequence(pdb_files):
                         continue
 
                     # Convert to one-letter code
-                    # FIXME: Check the docs "AttributeError: module 'Bio.PDB.Polypeptide' 
-                    # has no attribute 'three_to_one'. Did you mean: 'three_to_index'?"
+                    # NOTE: There is no 'three_to_one' method in the Polypeptide module
+                    # so we use three_to_index and index_to_one instead
+                    # "AttributeError: module 'Bio.PDB.Polypeptide' has no attribute 'three_to_one'. 
+                    # Did you mean: 'three_to_index'?"
                     try:
-                        sequence += Polypeptide.three_to_one(residue.get_resname())
+                        sequence += Polypeptide.index_to_one(Polypeptide.three_to_index(residue.get_resname()))
                     except KeyError:
                         continue
                         
@@ -102,8 +104,8 @@ def preprocess_sequence(pdb_files):
 
 def main():
     # NOTE: Comment out this line if you have already downloaded the PDB files
-    # download_pdb()
-
+    # get_pdb_id()
+    
     # Preprocess the sequences
     pdb_files_with_extension = os.listdir("PDBData")
     pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")] 
