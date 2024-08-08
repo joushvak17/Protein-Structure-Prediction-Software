@@ -66,7 +66,7 @@ def preprocess_sequence(pdb_files):
     for pdb_file in pdb_files:
         
         # Parse the PDB files 
-        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"PDBData/{pdb_file}.pdb")
+        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"DataPreparation/PDBData/{pdb_file}.pdb")
 
         for model in structure:
             for chain in model:
