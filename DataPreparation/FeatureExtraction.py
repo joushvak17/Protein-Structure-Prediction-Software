@@ -11,7 +11,6 @@ from DataOperations.FeatureExtractionOperations import *
 def extract_data(seq_record):
         try:
             r_value = None
-            r_free = None
             seq_id = seq_record.id
             base_pdb_id = seq_id.split("_")[0]
             pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
@@ -22,14 +21,12 @@ def extract_data(seq_record):
                     try:
                         if "REMARK   3   R VALUE            (WORKING SET) :" in line:
                             r_value = float(line.split()[-1])
-                        elif "REMARK   3   FREE R VALUE                     :" in line:
-                            r_free  = float(line.split()[-1])
                     except ValueError:
                         pass
                         
-            return seq_id, experimental, res, r_value, r_free
+            return experimental, res, r_value
         except ValueError:
-            return seq_id, None, None, None, None
+            return None, None, None, None
 
 def main():
     # Define the unaligned dataframe that will have all the calculated feature values
@@ -105,18 +102,15 @@ def main():
         all_gaps.extend(gaps_length)
 
     # Define the aligned dataframe that will have the calculated feature values
-    # TODO: Some of these features can be removed
-    # - The Consensus Sequence can be removed
+    # TODO: Check to see if the following features are needed
+    # - The Consensus Sequence, total gaps in alignment, average gap length, and mutations from consensus have been removed
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
                     "Conservation Scores": [conservation_score] * num_sequences,
                     "Percentage of Gaps Per Position": [perc_gap_per_position] * num_sequences,
-                    # "Total Gaps in Alignment": [total_gaps] * num_sequences,
-                    # "Average Gap Length": [average_gap_length] * num_sequences,
                     "Sequence Length": [],
                     "Gap Count": [],
                     "Percentage Gaps": []}
-                    # "Mutations from Consensus": []}
 
     for seq_record in alignment:
         aligned_data["ID"].append(seq_record.id)
@@ -126,30 +120,23 @@ def main():
         len_sequence = len(sequence)
         gap_count = sequence.count('-')
         perc_gaps = (gap_count / len_sequence) * 100
-        # mutations_from_consensus = sum(c1 != c2 for c1, c2 in zip(sequence, consensus))
 
         aligned_data["Sequence Length"].append(len_sequence)
         aligned_data["Gap Count"].append(gap_count)
         aligned_data["Percentage Gaps"].append(perc_gaps)
-        # aligned_data["Mutations from Consensus"].append(mutations_from_consensus)
 
     # Define the label dataframe that will be the prediction outputs
-    # TODO: Some of these features can be removed
-    label_data = {"ID": [], 
-                  "Experimental": [], 
+    # TODO: Check to see if experimental method is needed
+    # - The ID and R Free value have been removed
+    label_data = {"Experimental": [], 
                   "Resolution": [],
-                  "R Value": [],
-                  "R Free": []}
+                  "R Value": [],}
 
     with (ThreadPoolExecutor() as executor):
-        for seq_id, experimental, res, r_value, r_free in executor.map(extract_data, 
-                                                                       SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", 
-                                                                                   "fasta")):
-            label_data["ID"].append(seq_id)
+        for experimental, res, r_value in executor.map(extract_data, SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", "fasta")):
             label_data["Experimental"].append(experimental)
             label_data["Resolution"].append(res)
             label_data["R Value"].append(r_value)
-            label_data["R Free"].append(r_free)
 
     # Convert the dictionaries to dataframes
     unaligned_df = pd.DataFrame(unaligned_data)
