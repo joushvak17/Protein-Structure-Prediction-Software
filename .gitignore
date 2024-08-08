@@ -1,6 +1,6 @@
 DataPreparation/PDBData
 DataPreparation/FASTAData
-IntegrationOpenMM
+/IntegrationOpenMM
 
 .vscode
 __pycache__
