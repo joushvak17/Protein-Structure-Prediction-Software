@@ -96,9 +96,6 @@ def main():
     # Calculate the percentage of gaps at each position
     perc_gap_per_position = [count / num_sequences * 100 for count in gap_count_per_position]
 
-    # Calculate total number of gaps
-    total_gaps = sum(gap_count_per_position)
-
     # Calculate average gap length
     all_gaps = []
     for seq_record in alignment:
@@ -107,8 +104,6 @@ def main():
         gaps_length = [len(gap) for gap in gaps]
         all_gaps.extend(gaps_length)
 
-    average_gap_length = sum(all_gaps) / len(all_gaps) if all_gaps else 0
-
     # Define the aligned dataframe that will have the calculated feature values
     # TODO: Some of these features can be removed
     # - The Consensus Sequence can be removed
@@ -116,20 +111,14 @@ def main():
                     "Aligned Sequence": [],
                     "Conservation Scores": [conservation_score] * num_sequences,
                     "Percentage of Gaps Per Position": [perc_gap_per_position] * num_sequences,
-                    "Total Gaps in Alignment": [total_gaps] * num_sequences,
-                    "Average Gap Length": [average_gap_length] * num_sequences,
+                    # "Total Gaps in Alignment": [total_gaps] * num_sequences,
+                    # "Average Gap Length": [average_gap_length] * num_sequences,
                     "Sequence Length": [],
                     "Gap Count": [],
-                    "Percentage Gaps": [],
-                    "Mutations from Consensus": []}
-
-    # Add a counter variable
-    counter = 0
+                    "Percentage Gaps": []}
+                    # "Mutations from Consensus": []}
 
     for seq_record in alignment:
-        # Increment the counter
-        counter += 1
-
         aligned_data["ID"].append(seq_record.id)
         aligned_data["Aligned Sequence"].append(str(seq_record.seq))
         
@@ -137,12 +126,12 @@ def main():
         len_sequence = len(sequence)
         gap_count = sequence.count('-')
         perc_gaps = (gap_count / len_sequence) * 100
-        mutations_from_consensus = sum(c1 != c2 for c1, c2 in zip(sequence, consensus))
+        # mutations_from_consensus = sum(c1 != c2 for c1, c2 in zip(sequence, consensus))
 
         aligned_data["Sequence Length"].append(len_sequence)
         aligned_data["Gap Count"].append(gap_count)
         aligned_data["Percentage Gaps"].append(perc_gaps)
-        aligned_data["Mutations from Consensus"].append(mutations_from_consensus)
+        # aligned_data["Mutations from Consensus"].append(mutations_from_consensus)
 
     # Define the label dataframe that will be the prediction outputs
     # TODO: Some of these features can be removed
