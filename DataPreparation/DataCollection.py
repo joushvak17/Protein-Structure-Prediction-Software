@@ -106,7 +106,7 @@ def preprocess_sequence(pdb_files):
 
 def main():
     # NOTE: Comment out this line if you have already downloaded the PDB files
-    get_pdb_id()
+    # get_pdb_id()
     
     # Preprocess the sequences
     pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
