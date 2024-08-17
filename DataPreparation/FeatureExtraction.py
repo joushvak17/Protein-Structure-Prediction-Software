@@ -157,6 +157,9 @@ def main():
     num_cols = df.select_dtypes(include=["int64", "float64"]).columns
     df[num_cols] = scaler.fit_transform(df[num_cols])
 
+    # Print the length of the dataframe
+    print(f"Length of the dataframe: {len(df)}")
+
     # Save the dataframe to a csv file
     df.to_csv("DataPreparation/Features.csv", index=False)
 
