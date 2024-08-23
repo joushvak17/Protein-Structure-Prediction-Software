@@ -8,7 +8,6 @@ from retrying import retry
 from Bio.PDB import PDBParser, is_aa, Polypeptide
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Align.Applications import ClustalOmegaCommandline
 from Bio import SeqIO
 
 
@@ -102,6 +101,8 @@ def preprocess_sequence(pdb_files):
     return sequence_records
 
 def main():
+    print("Debugger is running!")
+    
     # NOTE: Comment out this line if you have already downloaded the PDB files
     get_pdb_id()
     
@@ -120,12 +121,26 @@ def main():
     # Align the sequences using Clustal Omega
     in_file = "DataPreparation/FASTAData/Sequences.fasta"
     out_file = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
-    clustal_cline = ClustalOmegaCommandline(infile=in_file, outfile=out_file, verbose=True, auto=True)
+    
+    if not os.path.exists(in_file):
+        print(f"Error: Input file {in_file} does not exist.")
+    elif os.path.getsize(in_file) == 0:
+        print(f"Error: Input file {in_file} is empty.")
+    else:
+        # Define the command to run Clustal Omega
+        cmd = [
+            "clustalo",
+            "-i", in_file,
+            "-o", out_file,
+            "--auto",
+            "--threads", str(os.cpu_count()),
+            "--verbose",
+        ]
 
-    try:
-        subprocess.run(str(clustal_cline), check=True, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}, {e.output}")
+        try:
+            subprocess.run(cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error: {e}, {e.output}")
 
 if __name__ == "__main__":
     main()
