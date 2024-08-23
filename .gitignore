@@ -1,6 +1,7 @@
+# Folders
 DataPreparation/PDBData
 DataPreparation/FASTAData
-/IntegrationOpenMM
 
+# Misc
 .vscode
 __pycache__
