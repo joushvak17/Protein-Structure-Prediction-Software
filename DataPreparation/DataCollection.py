@@ -13,26 +13,24 @@ from Bio import SeqIO
 
 
 # Define a function that will download a PDB file given a PDB ID
-def download_pdb(pdb_id):
-    # Define the URL to download the PDB file
-    url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
-    
-    # Define the path to save the PDB file
-    path = f"DataPreparation/PDBData/{pdb_id}.pdb"
-    
-    # Download the PDB file
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(path, "wb") as f:
-            f.write(response.content)
-    else:
-        print(f"Failed to download PDB file for {pdb_id}")
-
-# Define a function that will implement a retry strategy up to 5 times
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
-def download_pdb_retry(pdb_id):
+def download_pdb(pdb_id):
     try:
-        download_pdb(pdb_id)
+        # Define the URL to download the PDB file
+        url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
+        
+        # Create the directory to save the PDB files
+        if not os.path.exists("DataPreparation/PDBData"):
+            os.makedirs("DataPreparation/PDBData")
+        
+        # Define the path to save the PDB file
+        path = f"DataPreparation/PDBData/{pdb_id}.pdb"
+        
+        # Download the PDB file
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(path, "wb") as f:
+                f.write(response.content)
     except urllib3.exceptions.HTTPError as e:
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
@@ -48,10 +46,9 @@ def get_pdb_id():
 
     # Download all files from PDB using the IDs that were extracted
     for pdb_id in pdb_ids:
-        download_pdb_retry(pdb_id)
+        download_pdb(pdb_id)
     
-    print("The total length of the IDs that were able to be downloaded is: ", 
-          len(os.listdir("DataPreparation/PDBData")))
+    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("DataPreparation/PDBData")))
 
 # Define a function that will preprocess the sequences
 def preprocess_sequence(pdb_files):
@@ -106,12 +103,16 @@ def preprocess_sequence(pdb_files):
 
 def main():
     # NOTE: Comment out this line if you have already downloaded the PDB files
-    # get_pdb_id()
+    get_pdb_id()
     
     # Preprocess the sequences
     pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
     pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")] 
     sequences = preprocess_sequence(pdb_files)
+    
+    # Create the directory to save the FASTA file
+    if not os.path.exists("DataPreparation/FASTAData"):
+        os.makedirs("DataPreparation/FASTAData")
 
     # Write the sequences to a FASTA file
     SeqIO.write(sequences, "DataPreparation/FASTAData/Sequences.fasta", "fasta")
