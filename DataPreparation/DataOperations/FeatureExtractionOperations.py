@@ -1,3 +1,5 @@
+from Bio.PDB import PDBParser
+from Bio.PDB.DSSP import make_dssp_dict
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 
@@ -28,3 +30,13 @@ def calculate_pI(sequence):
     protein_analysis = ProteinAnalysis(sequence)
     pI = protein_analysis.isoelectric_point()
     return pI
+
+def disorder_prediction(pdb_files):
+    disorder_prediction = []
+    
+    for pdb_file in pdb_files:
+        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"DataPreparation/PDBData/{pdb_file}.pdb")
+        model = structure[0]
+        dssp_dict, _ = make_dssp_dict(model)
+    
+        disorder_prediction.append([dssp_dict[key][2] for key in dssp_dict])

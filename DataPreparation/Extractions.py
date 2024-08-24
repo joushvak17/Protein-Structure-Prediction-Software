@@ -1,5 +1,6 @@
 # Import the needed libraries
 import pandas as pd
+import os
 
 from Bio import SeqIO, AlignIO
 from Bio.Align import AlignInfo
@@ -22,7 +23,8 @@ def extract_unaligned(path):
                     "Net Charge at pH 7.0 (Neutral)": [],
                     "Isoelectric Point": [],
                     "Molecular Weight": [],
-                    "Sequence Length": []} 
+                    "Sequence Length": [],
+                    "Disorder Prediction": []} 
 
     for seq_record in SeqIO.parse(path, "fasta"):
         unaligned_data["ID"].append(seq_record.id)
@@ -51,7 +53,13 @@ def extract_unaligned(path):
         
         # Sequence Length
         sequence_length = len(seq_record.seq)
-        unaligned_data["Sequence Length"].append(sequence_length)    
+        unaligned_data["Sequence Length"].append(sequence_length)
+        
+    # Disorder Prediction
+    pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
+    pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")]
+    disorder_values = disorder_prediction(pdb_files)
+    unaligned_data["Disorder Prediction"].append(disorder_values)    
         
     return unaligned_data
 
