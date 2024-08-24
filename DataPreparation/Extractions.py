@@ -8,6 +8,53 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.LabelExtractionOperations import extract_experimental
 from DataOperations.FeatureExtractionOperations import *
 
+def extract_unaligned(path):
+    # Define the unaligned dataframe that will have all the calculated feature values
+    # - The Net Charge at pH 3.0 and 11.0 have beeen removed
+    unaligned_data = {"ID": [], 
+                    "Unaligned Sequence": [], 
+                    'A': [], 'R': [], 'N': [], 'D': [],
+                    'C': [], 'E': [], 'Q': [], 'G': [],
+                    'H': [], 'I': [], 'L': [], 'K': [],
+                    'M': [], 'F': [], 'P': [], 'S': [],
+                    'T': [], 'W': [], 'Y': [], 'V': [],
+                    "Hydrophobicity (Kyte-Doolittle Scale)": [],
+                    "Net Charge at pH 7.0 (Neutral)": [],
+                    "Isoelectric Point": [],
+                    "Molecular Weight": [],
+                    "Sequence Length": []} 
+
+    for seq_record in SeqIO.parse(path, "fasta"):
+        unaligned_data["ID"].append(seq_record.id)
+        unaligned_data["Unaligned Sequence"].append(str(seq_record.seq))
+        
+        # Amino Acid Frequency
+        aa_composition = calculate_a_acid_composition(str(seq_record.seq))
+        for amino_acid, percent in aa_composition.items():
+            unaligned_data[amino_acid].append(percent)
+        
+        # Hyrdophobicity
+        hydrophobicity_values = calculate_hydrophobicity(str(seq_record.seq))
+        unaligned_data["Hydrophobicity (Kyte-Doolittle Scale)"].append(hydrophobicity_values)
+        
+        # Net Charge at pH 7.0
+        charge_7 = calculate_polarity(str(seq_record.seq), 7.0)
+        unaligned_data["Net Charge at pH 7.0 (Neutral)"].append(charge_7)
+        
+        # Isolectric Point
+        isolectric_values = calculate_pI(str(seq_record.seq))
+        unaligned_data["Isoelectric Point"].append(isolectric_values)
+        
+        # Molecular Weight
+        mw_values = calculate_mw(str(seq_record.seq))
+        unaligned_data["Molecular Weight"].append(mw_values)
+        
+        # Sequence Length
+        sequence_length = len(seq_record.seq)
+        unaligned_data["Sequence Length"].append(sequence_length)    
+        
+    return unaligned_data
+
 def extract_data(seq_record):
         try:
             r_value = None
@@ -29,44 +76,11 @@ def extract_data(seq_record):
             return None, None, None, None
 
 def main():
-    # Define the unaligned dataframe that will have all the calculated feature values
-    # - The Net Charge at pH 3.0 and 11.0 have beeen removed
-    unaligned_data = {"ID": [], 
-                    "Unaligned Sequence": [], 
-                    'A': [], 'R': [], 'N': [], 'D': [],
-                    'C': [], 'E': [], 'Q': [], 'G': [],
-                    'H': [], 'I': [], 'L': [], 'K': [],
-                    'M': [], 'F': [], 'P': [], 'S': [],
-                    'T': [], 'W': [], 'Y': [], 'V': [],
-                    "Hydrophobicity (Kyte-Doolittle Scale)": [],
-                    "Net Charge at pH 7.0 (Neutral)": [],
-                    "Isoelectric Point": [],
-                    "Molecular Weight": [],
-                    "Sequence Length": []} 
-
-    for seq_record in SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", "fasta"):
-        unaligned_data["ID"].append(seq_record.id)
-        unaligned_data["Unaligned Sequence"].append(str(seq_record.seq))
-        
-        # Amino Acid Frequency
-        aa_composition = calculate_a_acid_composition(str(seq_record.seq))
-        for amino_acid, percent in aa_composition.items():
-            unaligned_data[amino_acid].append(percent)
-        
-        hydrophobicity_values = calculate_hydrophobicity(str(seq_record.seq))
-        unaligned_data["Hydrophobicity (Kyte-Doolittle Scale)"].append(hydrophobicity_values)
-        
-        charge_7 = calculate_polarity(str(seq_record.seq), 7.0)
-        unaligned_data["Net Charge at pH 7.0 (Neutral)"].append(charge_7)
-        
-        isolectric_values = calculate_pI(str(seq_record.seq))
-        unaligned_data["Isoelectric Point"].append(isolectric_values)
-        
-        mw_values = calculate_mw(str(seq_record.seq))
-        unaligned_data["Molecular Weight"].append(mw_values)
-                
-        sequence_length = len(seq_record.seq)
-        unaligned_data["Sequence Length"].append(sequence_length)    
+    # Define the path for the unaligned sequences
+    path = "DataPreparation/FASTAData/Sequences.fasta"
+    
+    # Extract the unaligned data
+    unaligned_data = extract_unaligned(path)
 
     # Read the alignment sequences
     alignment = AlignIO.read("DataPreparation/FASTAData/Aligned_Sequences.fasta", "fasta")
