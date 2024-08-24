@@ -1,6 +1,5 @@
 # Import the needed libraries
 import pandas as pd
-import os
 
 from Bio import SeqIO, AlignIO
 from Bio.Align import AlignInfo
@@ -55,11 +54,9 @@ def extract_unaligned(path):
         sequence_length = len(seq_record.seq)
         unaligned_data["Sequence Length"].append(sequence_length)
         
-    # Disorder Prediction
-    pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
-    pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")]
-    disorder_values = disorder_prediction(pdb_files)
-    unaligned_data["Disorder Prediction"].append(disorder_values)    
+        # Disorder Prediction
+        disorder_prediction = predict_disorder(seq_record.id)
+        unaligned_data["Disorder Prediction"].append(disorder_prediction)   
         
     return unaligned_data
 

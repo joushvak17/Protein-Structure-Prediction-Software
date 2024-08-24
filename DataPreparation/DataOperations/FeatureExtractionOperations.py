@@ -1,4 +1,6 @@
-from Bio.PDB import PDBParser, DSSP
+# Import the needed libraries
+import metapredict as meta
+
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 
@@ -30,20 +32,6 @@ def calculate_pI(sequence):
     pI = protein_analysis.isoelectric_point()
     return pI
 
-def disorder_prediction(pdb_files):
-    disorder_predictions = []
-    
-    for pdb_file in pdb_files:
-        # Parse PDB file and create DSSP object
-        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"DataPreparation/PDBData/{pdb_file}.pdb")
-        model = structure[0]
-        dssp = DSSP(model, f"DataPreparation/PDBData/{pdb_file}.pdb")
-        
-        # Interpret DSSP output
-        for key in dssp:
-            ss, acc = dssp[key][2], dssp[key][3]
-            # Here we assume coil ('C') structures with high accessibility might be disordered
-            if ss == 'C' and acc > 50:  # Threshold for accessibility
-                disorder_predictions.append(1)
-            else:
-                disorder_predictions.append(0)
+def predict_disorder(sequence):
+    disorder_prediction = meta.predict_disorder(sequence)
+    return disorder_prediction
