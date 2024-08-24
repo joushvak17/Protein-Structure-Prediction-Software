@@ -55,7 +55,7 @@ def extract_unaligned(path):
         unaligned_data["Sequence Length"].append(sequence_length)
         
         # Disorder Prediction
-        disorder_prediction = predict_disorder(seq_record.id)
+        disorder_prediction = predict_disorder(seq_record.seq, 0.5)
         unaligned_data["Disorder Prediction"].append(disorder_prediction)   
         
     return unaligned_data
