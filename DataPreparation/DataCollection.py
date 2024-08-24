@@ -101,9 +101,6 @@ def preprocess_sequence(pdb_files):
     return sequence_records
 
 def main():
-    print("Debugger is running!")
-    
-    # NOTE: Comment out this line if you have already downloaded the PDB files
     get_pdb_id()
     
     # Preprocess the sequences
