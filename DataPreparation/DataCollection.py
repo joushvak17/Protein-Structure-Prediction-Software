@@ -18,10 +18,6 @@ def download_pdb(pdb_id):
         # Define the URL to download the PDB file
         url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
         
-        # Create the directory to save the PDB files
-        if not os.path.exists("DataPreparation/PDBData"):
-            os.makedirs("DataPreparation/PDBData")
-        
         # Define the path to save the PDB file
         path = f"DataPreparation/PDBData/{pdb_id}.pdb"
         
@@ -43,6 +39,10 @@ def get_pdb_id():
     # Print the total number of PDB IDs
     print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
 
+    # Create the directory to save the PDB files
+    if not os.path.exists("DataPreparation/PDBData"):
+        os.makedirs("DataPreparation/PDBData")
+    
     # Download all files from PDB using the IDs that were extracted
     for pdb_id in pdb_ids:
         download_pdb(pdb_id)
