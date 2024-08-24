@@ -1,5 +1,4 @@
-from Bio.PDB import PDBParser
-from Bio.PDB.DSSP import make_dssp_dict
+from Bio.PDB import PDBParser, DSSP
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 
@@ -32,11 +31,19 @@ def calculate_pI(sequence):
     return pI
 
 def disorder_prediction(pdb_files):
-    disorder_prediction = []
+    disorder_predictions = []
     
     for pdb_file in pdb_files:
+        # Parse PDB file and create DSSP object
         structure = PDBParser(QUIET=True).get_structure(pdb_file, f"DataPreparation/PDBData/{pdb_file}.pdb")
         model = structure[0]
-        dssp_dict, _ = make_dssp_dict(model)
-    
-        disorder_prediction.append([dssp_dict[key][2] for key in dssp_dict])
+        dssp = DSSP(model, f"DataPreparation/PDBData/{pdb_file}.pdb")
+        
+        # Interpret DSSP output
+        for key in dssp:
+            ss, acc = dssp[key][2], dssp[key][3]
+            # Here we assume coil ('C') structures with high accessibility might be disordered
+            if ss == 'C' and acc > 50:  # Threshold for accessibility
+                disorder_predictions.append(1)
+            else:
+                disorder_predictions.append(0)
