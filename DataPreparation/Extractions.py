@@ -48,8 +48,8 @@ def main():
         unaligned_data["ID"].append(seq_record.id)
         unaligned_data["Unaligned Sequence"].append(str(seq_record.seq))
         
+        # Amino Acid Frequency
         aa_composition = calculate_a_acid_composition(str(seq_record.seq))
-        
         for amino_acid, percent in aa_composition.items():
             unaligned_data[amino_acid].append(percent)
         

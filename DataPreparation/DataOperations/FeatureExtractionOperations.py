@@ -1,4 +1,3 @@
-from Bio.SeqUtils import ProtParamData
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 
@@ -9,9 +8,7 @@ def calculate_a_acid_composition(sequence):
 
 
 def calculate_hydrophobicity(sequence):
-    protein_analysis = ProteinAnalysis(sequence)
-    hydrophobicity_values = protein_analysis.protein_scale(ProtParamData.kd,
-                                                           window=9)
+    hydrophobicity_values = ProteinAnalysis(sequence).gravy()
     return hydrophobicity_values
 
 
