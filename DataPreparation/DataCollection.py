@@ -89,7 +89,7 @@ def preprocess_sequence(pdb_files):
                     except KeyError:
                         continue
                         
-                # Add correctly formed sequences
+                # Add correctly formed sequences, check if sequence is not empty and not seen before
                 if sequence and sequence not in sequences_seen:
                     sequence_records.append(SeqRecord(Seq(sequence), id=f"{pdb_file}_{chain.id}",
                                                       description=f"Source File: {pdb_file}, Chain: {chain.id}"))
