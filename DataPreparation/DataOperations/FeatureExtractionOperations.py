@@ -1,4 +1,5 @@
 # Import the needed libraries
+from collections import Counter
 import metapredict as meta
 
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
@@ -26,6 +27,14 @@ def calculate_pI(sequence):
     protein_analysis = ProteinAnalysis(sequence)
     pI = protein_analysis.isoelectric_point()
     return pI
+
+# TODO: Figure out how this function works
+def calculate_dipeptide_composition(sequence):
+    dipeptides = [sequence[i:i+2] for i in range(len(sequence) - 1)]
+    dipeptide_counts = Counter(dipeptides)
+    total_dipeptides = sum(dipeptide_counts.values())
+    dipeptide_freq = {dipeptide: count / total_dipeptides for dipeptide, count in dipeptide_counts.items()}
+    return dipeptide_freq
 
 def predict_disorder(sequence, threshold):
     disorder_scores = meta.predict_disorder(sequence)

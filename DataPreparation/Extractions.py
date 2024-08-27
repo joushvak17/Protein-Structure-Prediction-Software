@@ -23,6 +23,10 @@ def extract_unaligned(path):
                     "Isoelectric Point": [],
                     "Molecular Weight": [],
                     "Sequence Length": [],
+                    "Dipeptide Composition": [],
+                    "Helix Propensity": [],
+                    "Sheet Propensity": [],
+                    "Coil Propensity": [],
                     "Disorder Prediction": []} 
 
     for seq_record in SeqIO.parse(path, "fasta"):
@@ -53,6 +57,10 @@ def extract_unaligned(path):
         # Sequence Length
         sequence_length = len(seq_record.seq)
         unaligned_data["Sequence Length"].append(sequence_length)
+        
+        # Depeptide Composition
+        dipeptide_composition = calculate_dipeptide_composition(str(seq_record.seq))
+        unaligned_data["Dipeptide Composition"].append(dipeptide_composition)
         
         # Disorder Prediction
         disorder_prediction = predict_disorder(seq_record.seq, 0.5)
