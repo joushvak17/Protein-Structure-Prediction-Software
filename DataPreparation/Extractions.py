@@ -10,7 +10,6 @@ from DataOperations.FeatureExtractionOperations import *
 
 def extract_unaligned(path):
     # Define the unaligned dataframe that will have all the calculated feature values
-    # - The Net Charge at pH 3.0 and 11.0 have beeen removed
     unaligned_data = {"ID": [], 
                     "Unaligned Sequence": [], 
                     'A': [], 'R': [], 'N': [], 'D': [],
@@ -30,6 +29,7 @@ def extract_unaligned(path):
                     "Disorder Prediction": []} 
 
     for seq_record in SeqIO.parse(path, "fasta"):
+        # ID and Unaligned Sequence
         unaligned_data["ID"].append(seq_record.id)
         unaligned_data["Unaligned Sequence"].append(str(seq_record.seq))
         
@@ -58,9 +58,15 @@ def extract_unaligned(path):
         sequence_length = len(seq_record.seq)
         unaligned_data["Sequence Length"].append(sequence_length)
         
-        # Depeptide Composition
+        # Dipeptide Composition
         dipeptide_composition = calculate_dipeptide_composition(str(seq_record.seq))
         unaligned_data["Dipeptide Composition"].append(dipeptide_composition)
+        
+        # Secondary Structure Propensity
+        helix_propensity, sheet_propensity, coil_propensity = calculate_secondary_structure_propensity(str(seq_record.seq))
+        unaligned_data["Helix Propensity"].append(helix_propensity)
+        unaligned_data["Sheet Propensity"].append(sheet_propensity)
+        unaligned_data["Coil Propensity"].append(coil_propensity)
         
         # Disorder Prediction
         disorder_prediction = predict_disorder(seq_record.seq, 0.5)

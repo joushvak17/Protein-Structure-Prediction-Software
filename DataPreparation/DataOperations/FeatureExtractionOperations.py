@@ -36,6 +36,19 @@ def calculate_dipeptide_composition(sequence):
     dipeptide_freq = {dipeptide: count / total_dipeptides for dipeptide, count in dipeptide_counts.items()}
     return dipeptide_freq
 
+# FIXME: The values in the propensities dictionary should be replaced with actual values
+def calculate_secondary_structure_propensity(sequence):
+    # Example propensities (values are illustrative)
+    propensities = {
+        'H': {'A': 1.45, 'R': 0.97, 'N': 0.67, 'D': 1.01, 'C': 0.77, 'E': 1.53, 'Q': 1.23, 'G': 0.57, 'H': 1.00, 'I': 1.08, 'L': 1.34, 'K': 1.07, 'M': 1.20, 'F': 1.12, 'P': 0.59, 'S': 0.79, 'T': 0.82, 'W': 1.14, 'Y': 0.61, 'V': 1.06},
+        'E': {'A': 0.97, 'R': 0.93, 'N': 0.65, 'D': 0.80, 'C': 1.30, 'E': 0.26, 'Q': 0.90, 'G': 0.81, 'H': 0.87, 'I': 1.60, 'L': 1.22, 'K': 0.74, 'M': 1.67, 'F': 1.28, 'P': 0.62, 'S': 0.72, 'T': 1.20, 'W': 1.19, 'Y': 1.29, 'V': 1.65},
+        'C': {'A': 0.77, 'R': 0.90, 'N': 1.56, 'D': 0.72, 'C': 1.19, 'E': 0.47, 'Q': 0.70, 'G': 1.64, 'H': 0.87, 'I': 0.47, 'L': 0.53, 'K': 0.74, 'M': 0.60, 'F': 0.59, 'P': 1.52, 'S': 1.56, 'T': 1.20, 'W': 0.54, 'Y': 1.29, 'V': 0.79}
+    }
+    helix_propensity = sum(propensities['H'].get(aa, 0) for aa in sequence) / len(sequence)
+    sheet_propensity = sum(propensities['E'].get(aa, 0) for aa in sequence) / len(sequence)
+    coil_propensity = sum(propensities['C'].get(aa, 0) for aa in sequence) / len(sequence)
+    return helix_propensity, sheet_propensity, coil_propensity
+
 def predict_disorder(sequence, threshold):
     disorder_scores = meta.predict_disorder(sequence)
     average_disorder_score = sum(disorder_scores) / len(disorder_scores)
