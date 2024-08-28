@@ -74,35 +74,10 @@ def extract_unaligned(path):
         
     return unaligned_data
 
-def extract_data(seq_record):
-        try:
-            r_value = None
-            seq_id = seq_record.id
-            base_pdb_id = seq_id.split("_")[0]
-            pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
-            experimental, res = extract_experimental(pdb_file)
-            
-            with open(pdb_file, "r") as f:
-                for line in f:
-                    try:
-                        if "REMARK   3   R VALUE            (WORKING SET) :" in line:
-                            r_value = float(line.split()[-1])
-                    except ValueError:
-                        pass
-                        
-            return experimental, res, r_value
-        except ValueError:
-            return None, None, None, None
-
-def main():
-    # Define the path for the unaligned sequences
-    path = "DataPreparation/FASTAData/Sequences.fasta"
-    
-    # Extract the unaligned data
-    unaligned_data = extract_unaligned(path)
-
+# TODO: Figure out this entire function
+def extract_aligned(path):
     # Read the alignment sequences
-    alignment = AlignIO.read("DataPreparation/FASTAData/Aligned_Sequences.fasta", "fasta")
+    alignment = AlignIO.read(path, "fasta")
 
     # Calculate Conservation Score
     start = 0
@@ -157,6 +132,37 @@ def main():
         aligned_data["Sequence Length"].append(len_sequence)
         aligned_data["Gap Count"].append(gap_count)
         aligned_data["Percentage Gaps"].append(perc_gaps)
+        
+    return aligned_data
+
+def extract_data(seq_record):
+        try:
+            r_value = None
+            seq_id = seq_record.id
+            base_pdb_id = seq_id.split("_")[0]
+            pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
+            experimental, res = extract_experimental(pdb_file)
+            
+            with open(pdb_file, "r") as f:
+                for line in f:
+                    try:
+                        if "REMARK   3   R VALUE            (WORKING SET) :" in line:
+                            r_value = float(line.split()[-1])
+                    except ValueError:
+                        pass
+                        
+            return experimental, res, r_value
+        except ValueError:
+            return None, None, None, None
+
+def main():
+    # Define the path for the unaligned and aligned sequences
+    unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
+    aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
+    
+    # Extract the unaligned and aligned data
+    unaligned_data = extract_unaligned(unaligned_path)
+    aligned_data = extract_aligned(aligned_path)
 
     # Define the label dataframe that will be the prediction outputs
     # TODO: Check to see if experimental method is needed

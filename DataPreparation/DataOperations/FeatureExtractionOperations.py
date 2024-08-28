@@ -49,6 +49,7 @@ def calculate_secondary_structure_propensity(sequence):
     coil_propensity = sum(propensities['C'].get(aa, 0) for aa in sequence) / len(sequence)
     return helix_propensity, sheet_propensity, coil_propensity
 
+# TODO: Figure out if this can be replaced with another tool
 def predict_disorder(sequence, threshold):
     disorder_scores = meta.predict_disorder(sequence)
     average_disorder_score = sum(disorder_scores) / len(disorder_scores)
