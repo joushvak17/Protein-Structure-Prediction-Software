@@ -82,15 +82,18 @@ def extract_aligned(path):
 
     # FIXME: The method information_content will be deprecated
     # Calculate Conservation Score
-    start = 0
-    end = alignment.get_alignment_length()
+    summary_info = AlignInfo.SummaryInfo(alignment)
+    positional_conservation_scores = []
     e_freq_table = {char: 0.05 for char in "ACDEFGHIKLMNPQRSTVWY"}
-    conservation_score = AlignInfo.SummaryInfo(alignment).information_content(start, end, 
-                                                                              e_freq_table=e_freq_table, 
-                                                                              chars_to_ignore=["-"])
+
+    for i in range(alignment.get_alignment_length()):
+        score = summary_info.information_content(start=i, end=i+1, 
+                                                 e_freq_table=e_freq_table, 
+                                                 chars_to_ignore=["-"])
+        positional_conservation_scores.append(score)
 
     # Initialize variables to store gap statistics
-    alignment_length = end
+    alignment_length = alignment.get_alignment_length()
     num_sequences = len(alignment)
     gap_count_per_position = [0] * alignment_length
 
@@ -133,9 +136,9 @@ def extract_aligned(path):
     # - The Consensus Sequence, total gaps in alignment, average gap length, and mutations from consensus have been removed
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
-                    "Conservation Scores": [conservation_score] * num_sequences,
-                    "Percentage of Gaps Per Position": [perc_gap_per_position] * num_sequences,
-                    "Positional Entropy": [entropy_list] * num_sequences,
+                    "Conservation Scores": positional_conservation_scores * num_sequences,
+                    "Percentage of Gaps Per Position": perc_gap_per_position,
+                    "Positional Entropy": entropy_list,
                     "Sequence Length": [],
                     "Gap Count": [],
                     "Percentage Gaps": []}
@@ -189,7 +192,7 @@ def main():
     # - The ID and R Free value have been removed
     label_data = {"Experimental": [], 
                   "Resolution": [],
-                  "R Value": [],}
+                  "R Value": []}
 
     with (ThreadPoolExecutor() as executor):
         for experimental, res, r_value in executor.map(extract_data, SeqIO.parse("DataPreparation/FASTAData/Sequences.fasta", "fasta")):
