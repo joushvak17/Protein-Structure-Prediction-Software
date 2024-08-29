@@ -79,7 +79,7 @@ def extract_aligned(path):
     # Read the alignment sequences
     alignment = AlignIO.read(path, "fasta")
 
-    # FIXME: The method information_content is deprecated
+    # FIXME: The method information_content will be deprecated
     # Calculate Conservation Score
     start = 0
     end = alignment.get_alignment_length()
