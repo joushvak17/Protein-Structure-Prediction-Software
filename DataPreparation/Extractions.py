@@ -1,5 +1,6 @@
 # Import the needed libraries
 import pandas as pd
+import math
 
 from Bio import SeqIO, AlignIO
 from Bio.Align import AlignInfo
@@ -109,6 +110,23 @@ def extract_aligned(path):
         gaps = [gap for gap in sequence.split('-') if gap]
         gaps_length = [len(gap) for gap in gaps]
         all_gaps.extend(gaps_length)
+        
+    # Calculate the positional entropy
+    entropy_list = []
+    
+    for i in range(alignment_length):
+        freq_dict = {}
+        for seq_record in alignment:
+            residue = str(seq_record.seq)[i]
+            if residue in freq_dict:
+                freq_dict[residue] += 1
+            else:
+                freq_dict[residue] = 1
+                
+        frequencies = [count / num_sequences for count in freq_dict.values()]
+        
+        entropy = -sum(f * math.log2(f) for f in frequencies if f > 0)
+        entropy_list.append(entropy)
 
     # Define the aligned dataframe that will have the calculated feature values
     # TODO: Check to see if the following features are needed
@@ -117,6 +135,7 @@ def extract_aligned(path):
                     "Aligned Sequence": [],
                     "Conservation Scores": [conservation_score] * num_sequences,
                     "Percentage of Gaps Per Position": [perc_gap_per_position] * num_sequences,
+                    "Positional Entropy": [entropy_list] * num_sequences,
                     "Sequence Length": [],
                     "Gap Count": [],
                     "Percentage Gaps": []}
