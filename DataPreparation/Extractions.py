@@ -7,13 +7,15 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.FeatureExtraction import *
 from DataOperations.LabelExtraction import *
 
-
+# Define the state file
 STATE_FILE = "state.pkl"
 
+# Define the function to save the state
 def save_state(state, filename):
     with open(filename, "wb") as f:
         pickle.dump(state, f)
 
+# Define the function to load the state
 def load_state(filename):
     with open(filename, "rb") as f:
         return pickle.load(f)
@@ -24,9 +26,8 @@ def main():
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
     else:
-        # Define the path for the unaligned and aligned sequences
+        # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
-        aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
     
         # Extract the unaligned, aligned, and label data
         unaligned_data = extract_unaligned(unaligned_path)
@@ -34,8 +35,12 @@ def main():
         # Save the state
         state = {"unaligned_data": unaligned_data}
         save_state(state, STATE_FILE)
-        print("State saved")
+        print("State saved. Please run the script again.")
         return
+    
+    # Define the path for the unaligned and aligned sequences
+    unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
+    aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
         
     aligned_data = extract_aligned(aligned_path)
     label_data = extract_labels(unaligned_path)
