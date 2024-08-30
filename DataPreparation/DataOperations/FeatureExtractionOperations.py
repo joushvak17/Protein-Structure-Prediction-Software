@@ -1,8 +1,9 @@
 # Import the needed libraries
-from collections import Counter
 import metapredict as meta
 
+from collections import Counter
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
+
 
 def calculate_a_acid_composition(sequence):
     protein_analysis = ProteinAnalysis(sequence)
