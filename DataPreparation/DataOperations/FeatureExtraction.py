@@ -5,7 +5,7 @@ from Bio import SeqIO, AlignIO
 from Bio.Align import AlignInfo
 from DataOperations.FeatureExtractionOperations import *
 
-
+# NOTE: The extractions for the unaligned sequences are done
 def extract_unaligned(path):
     # Define the unaligned dataframe that will have all the calculated feature values
     unaligned_data = {"ID": [], 

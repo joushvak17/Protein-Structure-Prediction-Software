@@ -1,18 +1,42 @@
 # Import the needed libraries
 import pandas as pd
+import pickle
+import os
 
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.FeatureExtraction import *
 from DataOperations.LabelExtraction import *
 
 
+STATE_FILE = "state.pkl"
+
+def save_state(state, filename):
+    with open(filename, "wb") as f:
+        pickle.dump(state, f)
+
+def load_state(filename):
+    with open(filename, "rb") as f:
+        return pickle.load(f)
+
 def main():
-    # Define the path for the unaligned and aligned sequences
-    unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
-    aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
+    if os.path.exists(STATE_FILE):
+        # Load the saved state
+        state = load_state(STATE_FILE)
+        unaligned_data = state["unaligned_data"]
+    else:
+        # Define the path for the unaligned and aligned sequences
+        unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
+        aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
     
-    # Extract the unaligned, aligned, and label data
-    unaligned_data = extract_unaligned(unaligned_path)
+        # Extract the unaligned, aligned, and label data
+        unaligned_data = extract_unaligned(unaligned_path)
+        
+        # Save the state
+        state = {"unaligned_data": unaligned_data}
+        save_state(state, STATE_FILE)
+        print("State saved")
+        return
+        
     aligned_data = extract_aligned(aligned_path)
     label_data = extract_labels(unaligned_path)
 
@@ -40,6 +64,13 @@ def main():
 
     # Save the dataframe to a csv file
     df.to_csv("DataPreparation/Features.csv", index=False)
+    
+    # Save the final state
+    state= {"aligned_data": aligned_data, 
+            "label_data": label_data,
+            "df": df,
+            "le": le,
+            "scaler": scaler}
 
 if __name__ == "__main__":
     main()
