@@ -1,4 +1,6 @@
+# Import the needed libraries
 from Bio import PDB
+
 
 def extract_data(seq_record):
         try:
