@@ -8,7 +8,7 @@ from DataOperations.FeatureExtraction import *
 from DataOperations.LabelExtraction import *
 
 # Define the state file
-STATE_FILE = "state.pkl"
+STATE_FILE = "DataPreparation/state.pkl"
 
 # Define the function to save the state
 def save_state(state, filename):
