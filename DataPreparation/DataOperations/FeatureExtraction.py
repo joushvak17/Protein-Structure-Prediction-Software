@@ -1,7 +1,7 @@
 # Import the needed libraries
 import math
 
-from Bio import SeqIO, AlignIO
+from Bio import SeqIO, AlignIO, Phylo
 from Bio.Align import AlignInfo
 from DataOperations.FeatureExtractionOperations import *
 
@@ -88,6 +88,9 @@ def extract_aligned(path):
                                                  e_freq_table=e_freq_table, 
                                                  chars_to_ignore=["-"])
         positional_conservation_scores.append(score)
+        
+    # Get the consensus sequence
+    consensus = summary_info.dumb_consensus(threshold=0.7, ambiguous='X')
 
     # Calculate the Position Specific Score Matrix
     pssm = summary_info.pos_specific_score_matrix(chars_to_ignore=["-"])
@@ -134,17 +137,35 @@ def extract_aligned(path):
         
         entropy = -sum(f * math.log2(f) for f in frequencies if f > 0)
         entropy_list.append(entropy)
+    
+    # Read the phylogenetic tree and show it
+    tree_file = "DataPreparation/FASTAData/tree.newick"
+    tree = Phylo.read(tree_file, "newick")
+    Phylo.draw_ascii(tree)
+    
+    # Create a dictionary to store the phylogenetic weighting
+    phylo_weights = {}
+    
+    # Calculate the total branch length for each terminal node
+    for terminal_node in tree.get_terminals():
+        node_path = tree.get_path(terminal_node)
+        phylo_weights[terminal_node.name] = sum(clade.branch_length for clade in node_path)
+    
+    # Normalize the weights
+    total_weight = sum(phylo_weights.values())
+    for key in phylo_weights:
+        phylo_weights[key] /= total_weight
 
     # Define the aligned dataframe that will have the calculated feature values
     # TODO: Need to work on the phylogenetic weighting and consensus sequence
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
-                    "Consensus Sequence": [],
                     "Conservation Scores": positional_conservation_scores * num_sequences,
+                    "Consensus Sequence": consensus * num_sequences,
                     "PSSM Scores": pssm_scores * num_sequences,
                     "Percentage of Gaps Per Position": perc_gap_per_position,
                     "Positional Entropy": entropy_list,
-                    "Phylogenetic Weighting": [],
+                    "Phylogenetic Weighting": phylo_weights,
                     "Sequence Length": [],
                     "Gap Count": [],
                     "Percentage Gaps": []}
