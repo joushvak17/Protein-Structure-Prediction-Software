@@ -77,7 +77,7 @@ def extract_aligned(path):
     # Read the alignment sequences
     alignment = AlignIO.read(path, "fasta")
 
-    # FIXME: The method information_content will be deprecated
+    # FIXME: Several of the features, such as information_content, will be deprecated
     # Calculate Conservation Score
     summary_info = AlignInfo.SummaryInfo(alignment)
     positional_conservation_scores = []
@@ -89,6 +89,13 @@ def extract_aligned(path):
                                                  chars_to_ignore=["-"])
         positional_conservation_scores.append(score)
 
+    # Calculate the Position Specific Score Matrix
+    pssm = summary_info.pos_specific_score_matrix(chars_to_ignore=["-"])
+    pssm_scores = []
+    
+    for score in pssm:
+        pssm_scores.append(score)
+    
     # Initialize variables to store gap statistics
     alignment_length = alignment.get_alignment_length()
     num_sequences = len(alignment)
@@ -129,13 +136,15 @@ def extract_aligned(path):
         entropy_list.append(entropy)
 
     # Define the aligned dataframe that will have the calculated feature values
-    # TODO: Check to see if the following features are needed
-    # - The Consensus Sequence, total gaps in alignment, average gap length, and mutations from consensus have been removed
+    # TODO: Need to work on the phylogenetic weighting and consensus sequence
     aligned_data = {"ID": [], 
                     "Aligned Sequence": [],
+                    "Consensus Sequence": [],
                     "Conservation Scores": positional_conservation_scores * num_sequences,
+                    "PSSM Scores": pssm_scores * num_sequences,
                     "Percentage of Gaps Per Position": perc_gap_per_position,
                     "Positional Entropy": entropy_list,
+                    "Phylogenetic Weighting": [],
                     "Sequence Length": [],
                     "Gap Count": [],
                     "Percentage Gaps": []}
