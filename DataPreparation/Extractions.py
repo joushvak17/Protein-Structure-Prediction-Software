@@ -2,6 +2,7 @@
 import pandas as pd
 import pickle
 import os
+import subprocess
 
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.FeatureExtraction import *
@@ -26,11 +27,27 @@ def main():
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
     else:
-        # Define the path for the unaligned sequences
+        # Define the path for the unaligned and aligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
+        aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
     
         # Extract the unaligned, aligned, and label data
         unaligned_data = extract_unaligned(unaligned_path)
+        
+        # Define the tree file
+        tree_file = "DataPreparation/FASTAData/tree.newick"
+        
+        if os.path.exists(tree_file):
+            print("The tree file exists.")
+        else:
+            # Define the command to run Clustal Omega
+            cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", tree_file]
+            
+            try:
+                # Run the command
+                subprocess.run(cmd, check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Error: {e}, {e.output}")
         
         # Save the state
         state = {"unaligned_data": unaligned_data}
