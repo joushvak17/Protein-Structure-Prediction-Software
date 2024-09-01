@@ -20,8 +20,12 @@ def load_state(filename):
         return pickle.load(f)
 
 def main():
-    if os.path.exists(TREE_FILE):
-        print("The tree file exists.")
+    if os.path.exists(TREE_FILE) and os.path.exists(STATE_FILE):
+        print("The tree file and state file exist.")
+        
+        # Load the saved state
+        state = load_state(STATE_FILE)
+        unaligned_data = state["unaligned_data"]
     else:
         # Define the path for the aligned sequences
         aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
@@ -34,12 +38,7 @@ def main():
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error: {e}, {e.output}")
-    
-    if os.path.exists(STATE_FILE):
-        # Load the saved state
-        state = load_state(STATE_FILE)
-        unaligned_data = state["unaligned_data"]
-    else:
+        
         # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
     
