@@ -42,7 +42,7 @@ def main():
         # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
     
-        # Extract the unaligned, aligned, and label data
+        # Extract the unaligned data
         unaligned_data = extract_unaligned(unaligned_path)
         
         # Save the state
