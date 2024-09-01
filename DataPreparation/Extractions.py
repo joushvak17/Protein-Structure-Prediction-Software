@@ -11,6 +11,9 @@ from DataOperations.LabelExtraction import *
 # Define the state file
 STATE_FILE = "DataPreparation/state.pkl"
 
+# Define the tree file
+TREE_FILE = "DataPreparation/FASTAData/tree.newick"
+
 # Define the function to save the state
 def save_state(state, filename):
     with open(filename, "wb") as f:
@@ -22,7 +25,7 @@ def load_state(filename):
         return pickle.load(f)
 
 def main():
-    if os.path.exists(STATE_FILE):
+    if os.path.exists(STATE_FILE) and os.path.exists(TREE_FILE):
         # Load the saved state
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
@@ -34,14 +37,11 @@ def main():
         # Extract the unaligned, aligned, and label data
         unaligned_data = extract_unaligned(unaligned_path)
         
-        # Define the tree file
-        tree_file = "DataPreparation/FASTAData/tree.newick"
-        
-        if os.path.exists(tree_file):
+        if os.path.exists(TREE_FILE):
             print("The tree file exists.")
         else:
             # Define the command to run Clustal Omega
-            cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", tree_file]
+            cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", TREE_FILE]
             
             try:
                 # Run the command

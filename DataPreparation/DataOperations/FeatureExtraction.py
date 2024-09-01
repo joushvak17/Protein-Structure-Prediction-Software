@@ -141,7 +141,7 @@ def extract_aligned(path):
     # Read the phylogenetic tree and show it
     tree_file = "DataPreparation/FASTAData/tree.newick"
     tree = Phylo.read(tree_file, "newick")
-    Phylo.draw_ascii(tree)
+    Phylo.draw(tree)
     
     # Create a dictionary to store the phylogenetic weighting
     phylo_weights = {}
