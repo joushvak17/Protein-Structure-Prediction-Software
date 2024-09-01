@@ -139,7 +139,7 @@ def extract_aligned(path):
         entropy_list.append(entropy)
     
     # Read the phylogenetic tree and show it
-    tree_file = "DataPreparation/FASTAData/tree.newick"
+    tree_file = "DataPreparation/tree.newick"
     tree = Phylo.read(tree_file, "newick")
     Phylo.draw(tree)
     

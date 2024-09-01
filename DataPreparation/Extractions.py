@@ -8,11 +8,6 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.FeatureExtraction import *
 from DataOperations.LabelExtraction import *
 
-# Define the state file
-STATE_FILE = "DataPreparation/state.pkl"
-
-# Define the tree file
-TREE_FILE = "DataPreparation/FASTAData/tree.newick"
 
 # Define the function to save the state
 def save_state(state, filename):
@@ -25,29 +20,31 @@ def load_state(filename):
         return pickle.load(f)
 
 def main():
-    if os.path.exists(STATE_FILE) and os.path.exists(TREE_FILE):
+    if os.path.exists(TREE_FILE):
+        print("The tree file exists.")
+    else:
+        # Define the path for the aligned sequences
+        aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
+        
+        # Define the command to run Clustal Omega
+        cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", TREE_FILE]
+            
+        try:
+            # Run the command
+            subprocess.run(cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error: {e}, {e.output}")
+    
+    if os.path.exists(STATE_FILE):
         # Load the saved state
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
     else:
-        # Define the path for the unaligned and aligned sequences
+        # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
-        aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
     
         # Extract the unaligned, aligned, and label data
         unaligned_data = extract_unaligned(unaligned_path)
-        
-        if os.path.exists(TREE_FILE):
-            print("The tree file exists.")
-        else:
-            # Define the command to run Clustal Omega
-            cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", TREE_FILE]
-            
-            try:
-                # Run the command
-                subprocess.run(cmd, check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error: {e}, {e.output}")
         
         # Save the state
         state = {"unaligned_data": unaligned_data}
@@ -95,4 +92,10 @@ def main():
             "scaler": scaler}
 
 if __name__ == "__main__":
+    # Define the tree file
+    TREE_FILE = "DataPreparation/FASTAData/tree.newick"
+
+    # Define the state file
+    STATE_FILE = "DataPreparation/state.pkl"
+    
     main()
