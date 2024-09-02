@@ -116,11 +116,9 @@ def main():
     df.to_csv("DataPreparation/Features.csv", index=False)
     
     # Save the final state
-    state= {"aligned_data": aligned_data, 
-            "label_data": label_data,
-            "df": df,
-            "le": le,
-            "scaler": scaler}
+    state = {"aligned_data": aligned_data, 
+             "label_data": label_data,
+             "df": df}
     save_state(state, STATE_FILE)
     logging.debug("Final state saved.")
 
