@@ -160,7 +160,7 @@ def main():
             "-o", out_file,
             "--auto",
             "--threads", str(os.cpu_count()),
-            "--verbose",
+            "--verbose"
         ]
 
         try:
