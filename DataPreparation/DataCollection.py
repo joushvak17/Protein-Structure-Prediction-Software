@@ -1,4 +1,5 @@
 # Import the needed libraries
+import pdb
 import requests
 import os
 import urllib3
@@ -13,13 +14,13 @@ from Bio import SeqIO
 
 # Define a function that will download a PDB file given a PDB ID
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
-def download_pdb(pdb_id):
+def download_pdb(pdb_id, pdb_data):
     try:
         # Define the URL to download the PDB file
         url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
         
         # Define the path to save the PDB file
-        path = f"DataPreparation/PDBData/{pdb_id}.pdb"
+        path = pdb_data + f"/{pdb_id}.pdb"
         
         # Download the PDB file
         response = requests.get(url)
@@ -30,27 +31,31 @@ def download_pdb(pdb_id):
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
-def get_pdb_id():
+# TODO:
+def get_pdb_id(pdb_csv_file):
     # Get the PDB IDs from the CSV file
-    with open("DataPreparation/PDBDataID.csv", "r") as f:
+    with open(pdb_csv_file, "r") as f:
         line = f.readline()
         pdb_ids = line.split(",")
 
     # Print the total number of PDB IDs
-    print("The total length of the IDs in the PDBDataID.csv file is: ", len(pdb_ids))
+    print("The total length of the IDs in the CSV file is: ", len(pdb_ids))
+
+    # Define a directory to save the PDB files
+    pdb_data = "DataPreparation/PDBData"
 
     # Create the directory to save the PDB files
-    if not os.path.exists("DataPreparation/PDBData"):
-        os.makedirs("DataPreparation/PDBData")
+    if not os.path.exists(pdb_data):
+        os.makedirs(pdb_data)
     
     # Download all files from PDB using the IDs that were extracted
     for pdb_id in pdb_ids:
-        download_pdb(pdb_id)
+        download_pdb(pdb_id, pdb_data)
     
-    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir("DataPreparation/PDBData")))
+    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir(pdb_data)))
 
 # Define a function that will preprocess the sequences
-def preprocess_sequence(pdb_files):
+def preprocess_sequence(pdb_files, pdb_data):
     sequence_records = []
     sequences_seen = set()
     
@@ -62,7 +67,7 @@ def preprocess_sequence(pdb_files):
     for pdb_file in pdb_files:
         
         # Parse the PDB files 
-        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"DataPreparation/PDBData/{pdb_file}.pdb")
+        structure = PDBParser(QUIET=True).get_structure(pdb_file, f"{pdb_data}/{pdb_file}.pdb")
 
         for model in structure:
             for chain in model:
@@ -101,23 +106,31 @@ def preprocess_sequence(pdb_files):
     return sequence_records
 
 def main():
-    get_pdb_id()
+    # Define the path to the csv file containing the PDB IDs
+    pdb_csv_file = "DataPreparation/PDBDataID.csv"
+    
+    # Get the PDB files from the PDB IDs
+    get_pdb_id(pdb_csv_file)
     
     # Preprocess the sequences
-    pdb_files_with_extension = os.listdir("DataPreparation/PDBData")
+    pdb_data = "DataPreparation/PDBData"
+    pdb_files_with_extension = os.listdir(pdb_data)
     pdb_files = [file[:-4] for file in pdb_files_with_extension if file.endswith(".pdb")] 
-    sequences = preprocess_sequence(pdb_files)
+    sequences = preprocess_sequence(pdb_files, pdb_data)
+    
+    # Define a path to save the FASTA file
+    fasta_path = "DataPreparation/FASTAData"
     
     # Create the directory to save the FASTA file
-    if not os.path.exists("DataPreparation/FASTAData"):
-        os.makedirs("DataPreparation/FASTAData")
+    if not os.path.exists(fasta_path):
+        os.makedirs(fasta_path)
 
     # Write the sequences to a FASTA file
-    SeqIO.write(sequences, "DataPreparation/FASTAData/Sequences.fasta", "fasta")
+    SeqIO.write(sequences, fasta_path + "/Sequences.fasta", "fasta")
 
     # Align the sequences using Clustal Omega
-    in_file = "DataPreparation/FASTAData/Sequences.fasta"
-    out_file = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
+    in_file = fasta_path + "/Sequences.fasta"
+    out_file = fasta_path + "/Aligned_Sequences.fasta"
     
     if not os.path.exists(in_file):
         print(f"Error: Input file {in_file} does not exist.")
