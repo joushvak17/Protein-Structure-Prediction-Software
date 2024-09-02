@@ -7,24 +7,34 @@ from DataOperations.FeatureExtractionOperations import *
 
 # NOTE: The extractions for the unaligned sequences are done
 def extract_unaligned(path):
+    """Function to extract the features from the unaligned sequences
+
+    Args:
+        path (string): The path to the unaligned sequences
+
+    Returns:
+        dict: The dictionary containing the extracted features
+    """
     # Define the unaligned dataframe that will have all the calculated feature values
-    unaligned_data = {"ID": [], 
-                    "Unaligned Sequence": [], 
-                    'A': [], 'R': [], 'N': [], 'D': [],
-                    'C': [], 'E': [], 'Q': [], 'G': [],
-                    'H': [], 'I': [], 'L': [], 'K': [],
-                    'M': [], 'F': [], 'P': [], 'S': [],
-                    'T': [], 'W': [], 'Y': [], 'V': [],
-                    "Hydrophobicity (Kyte-Doolittle Scale)": [],
-                    "Net Charge at pH 7.0 (Neutral)": [],
-                    "Isoelectric Point": [],
-                    "Molecular Weight": [],
-                    "Sequence Length": [],
-                    "Dipeptide Composition": [],
-                    "Helix Propensity": [],
-                    "Sheet Propensity": [],
-                    "Coil Propensity": [],
-                    "Disorder Prediction": []} 
+    unaligned_data = {
+        "ID": [],
+        "Unaligned Sequence": [],
+        'A': [], 'R': [], 'N': [], 'D': [],
+        'C': [], 'E': [], 'Q': [], 'G': [],
+        'H': [], 'I': [], 'L': [], 'K': [],
+        'M': [], 'F': [], 'P': [], 'S': [],
+        'T': [], 'W': [], 'Y': [], 'V': [],
+        "Hydrophobicity (Kyte-Doolittle Scale)": [],
+        "Net Charge at pH 7.0 (Neutral)": [],
+        "Isoelectric Point": [],
+        "Molecular Weight": [],
+        "Sequence Length": [],
+        "Dipeptide Composition": [],
+        "Helix Propensity": [],
+        "Sheet Propensity": [],
+        "Coil Propensity": [],
+        "Disorder Prediction": []
+    } 
 
     for seq_record in SeqIO.parse(path, "fasta"):
         # ID and Unaligned Sequence
@@ -74,6 +84,14 @@ def extract_unaligned(path):
 
 # TODO: Figure out this entire function
 def extract_aligned(path):
+    """Function to extract the features from the aligned sequences
+
+    Args:
+        path (string): The path to the aligned sequences
+
+    Returns:
+        dict: The dictionary containing the extracted features
+    """
     # Read the alignment sequences
     alignment = AlignIO.read(path, "fasta")
 
@@ -139,7 +157,7 @@ def extract_aligned(path):
         entropy_list.append(entropy)
     
     # Read the phylogenetic tree and show it
-    tree_file = "DataPreparation/tree.newick"
+    tree_file = "DataPreparation/FASTAData/tree.newick"
     tree = Phylo.read(tree_file, "newick")
     Phylo.draw(tree)
     
@@ -158,17 +176,19 @@ def extract_aligned(path):
 
     # Define the aligned dataframe that will have the calculated feature values
     # TODO: Need to work on the phylogenetic weighting and consensus sequence
-    aligned_data = {"ID": [], 
-                    "Aligned Sequence": [],
-                    "Conservation Scores": positional_conservation_scores * num_sequences,
-                    "Consensus Sequence": consensus * num_sequences,
-                    "PSSM Scores": pssm_scores * num_sequences,
-                    "Percentage of Gaps Per Position": perc_gap_per_position,
-                    "Positional Entropy": entropy_list,
-                    "Phylogenetic Weighting": phylo_weights,
-                    "Sequence Length": [],
-                    "Gap Count": [],
-                    "Percentage Gaps": []}
+    aligned_data = {
+        "ID": [], 
+        "Aligned Sequence": [],
+        "Conservation Scores": positional_conservation_scores * num_sequences,
+        "Consensus Sequence": consensus * num_sequences,
+        "PSSM Scores": pssm_scores * num_sequences,
+        "Percentage of Gaps Per Position": perc_gap_per_position,
+        "Positional Entropy": entropy_list,
+        "Phylogenetic Weighting": phylo_weights,
+        "Sequence Length": [],
+        "Gap Count": [],
+        "Percentage Gaps": []
+    }
 
     for seq_record in alignment:
         aligned_data["ID"].append(seq_record.id)
