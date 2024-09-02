@@ -31,7 +31,6 @@ def download_pdb(pdb_id, pdb_data):
         print(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
-# TODO:
 def get_pdb_id(pdb_csv_file):
     # Get the PDB IDs from the CSV file
     with open(pdb_csv_file, "r") as f:
