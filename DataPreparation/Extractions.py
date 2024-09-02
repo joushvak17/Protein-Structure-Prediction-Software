@@ -41,13 +41,15 @@ def main():
             
         try:
             # Run the command with a timeout
-            subprocess.run(cmd, check=True, timeout=300)  # Timeout after 5 minutes
+            subprocess.run(cmd, check=True, timeout=600)  # Timeout after 10 minutes
         except subprocess.CalledProcessError as e:
             logging.error(f"Error: {e}, {e.output}")
             return
         except subprocess.TimeoutExpired as e:
             logging.error(f"Timeout expired: {e}")
             return
+        
+        logging.debug("Clustal Omega completed. Will now extract the unaligned sequences.")
         
         # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
