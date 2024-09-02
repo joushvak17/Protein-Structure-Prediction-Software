@@ -1,3 +1,4 @@
+# Import the needed libraries
 import pandas as pd
 import pickle
 import os
@@ -11,18 +12,36 @@ from DataOperations.LabelExtraction import *
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Define the function to save the state
 def save_state(state, filename):
+    """Function to save the state
+
+    Args:
+        state (dict): The state to save
+        filename (string): The filename to save the state
+    """
     with open(filename, "wb") as f:
         pickle.dump(state, f)
 
-# Define the function to load the state
 def load_state(filename):
+    """Function to load the state
+
+    Args:
+        filename (string): The filename to load the state
+
+    Returns:
+        state: The loaded state
+    """
     with open(filename, "rb") as f:
         return pickle.load(f)
 
 def main():
     logging.debug("Starting main function")
+    
+    # Define the tree file
+    TREE_FILE = "DataPreparation/FASTAData/tree.newick"
+
+    # Define the state file
+    STATE_FILE = "DataPreparation/state.pkl"
     
     if os.path.exists(TREE_FILE) and os.path.exists(STATE_FILE):
         logging.debug("The tree file and state file exist.")
@@ -37,11 +56,16 @@ def main():
         aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
         
         # Define the command to run Clustal Omega
-        cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", TREE_FILE]
+        cmd = ["clustalo", 
+               "-i", aligned_path, 
+               "--guidetree-out", TREE_FILE,
+               "--auto",
+               "--threads", str(os.cpu_count()),
+               "--verbose"]
             
         try:
             # Run the command with a timeout
-            subprocess.run(cmd, check=True, timeout=600)  # Timeout after 10 minutes
+            subprocess.run(cmd, check=True, timeout=1800)  # Timeout after 30 minutes
         except subprocess.CalledProcessError as e:
             logging.error(f"Error: {e}, {e.output}")
             return
@@ -105,10 +129,4 @@ def main():
     logging.debug("Final state saved.")
 
 if __name__ == "__main__":
-    # Define the tree file
-    TREE_FILE = "DataPreparation/FASTAData/tree.newick"
-
-    # Define the state file
-    STATE_FILE = "DataPreparation/state.pkl"
-    
     main()
