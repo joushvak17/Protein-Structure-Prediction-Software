@@ -1,13 +1,15 @@
-# Import the needed libraries
 import pandas as pd
 import pickle
 import os
 import subprocess
+import logging
 
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from DataOperations.FeatureExtraction import *
 from DataOperations.LabelExtraction import *
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Define the function to save the state
 def save_state(state, filename):
@@ -20,13 +22,17 @@ def load_state(filename):
         return pickle.load(f)
 
 def main():
+    logging.debug("Starting main function")
+    
     if os.path.exists(TREE_FILE) and os.path.exists(STATE_FILE):
-        print("The tree file and state file exist.")
+        logging.debug("The tree file and state file exist.")
         
         # Load the saved state
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
     else:
+        logging.debug("Tree file or state file does not exist. Running Clustal Omega.")
+        
         # Define the path for the aligned sequences
         aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
         
@@ -34,10 +40,14 @@ def main():
         cmd = ["clustalo", "-i", aligned_path, "--guidetree-out", TREE_FILE]
             
         try:
-            # Run the command
-            subprocess.run(cmd, check=True)
+            # Run the command with a timeout
+            subprocess.run(cmd, check=True, timeout=300)  # Timeout after 5 minutes
         except subprocess.CalledProcessError as e:
-            print(f"Error: {e}, {e.output}")
+            logging.error(f"Error: {e}, {e.output}")
+            return
+        except subprocess.TimeoutExpired as e:
+            logging.error(f"Timeout expired: {e}")
+            return
         
         # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
@@ -48,7 +58,7 @@ def main():
         # Save the state
         state = {"unaligned_data": unaligned_data}
         save_state(state, STATE_FILE)
-        print("State saved. Please run the script again.")
+        logging.debug("State saved. Please run the script again.")
         return
     
     # Define the path for the unaligned and aligned sequences
@@ -78,7 +88,7 @@ def main():
     df[num_cols] = scaler.fit_transform(df[num_cols])
 
     # Print the length of the dataframe
-    print(f"Length of the dataframe: {len(df)}")
+    logging.debug(f"Length of the dataframe: {len(df)}")
 
     # Save the dataframe to a csv file
     df.to_csv("DataPreparation/Features.csv", index=False)
@@ -89,6 +99,8 @@ def main():
             "df": df,
             "le": le,
             "scaler": scaler}
+    save_state(state, STATE_FILE)
+    logging.debug("Final state saved.")
 
 if __name__ == "__main__":
     # Define the tree file
