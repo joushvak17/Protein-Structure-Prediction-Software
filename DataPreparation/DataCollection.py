@@ -1,5 +1,4 @@
 # Import the needed libraries
-import pdb
 import requests
 import os
 import urllib3
@@ -12,9 +11,14 @@ from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 
 
-# Define a function that will download a PDB file given a PDB ID
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
 def download_pdb(pdb_id, pdb_data):
+    """Function that will download the PDB files
+
+    Args:
+        pdb_id (string): The PDB ID
+        pdb_data (string): The path to save the PDB files
+    """
     try:
         # Define the URL to download the PDB file
         url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
@@ -32,6 +36,11 @@ def download_pdb(pdb_id, pdb_data):
         raise
 
 def get_pdb_id(pdb_csv_file):
+    """Function to get the PDB files from the PDB IDs
+
+    Args:
+        pdb_csv_file (string): File path to the CSV file containing the PDB IDs
+    """
     # Get the PDB IDs from the CSV file
     with open(pdb_csv_file, "r") as f:
         line = f.readline()
@@ -53,8 +62,16 @@ def get_pdb_id(pdb_csv_file):
     
     print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir(pdb_data)))
 
-# Define a function that will preprocess the sequences
 def preprocess_sequence(pdb_files, pdb_data):
+    """Function that will preprocess the sequences
+
+    Args:
+        pdb_files (list): List of PDB files
+        pdb_data (string): The path to the PDB files
+
+    Returns:
+        list: List of sequence records
+    """
     sequence_records = []
     sequences_seen = set()
     
