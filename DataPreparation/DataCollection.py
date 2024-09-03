@@ -16,8 +16,8 @@ def download_pdb(pdb_id, pdb_data):
     """Function that will download the PDB files
 
     Args:
-        pdb_id (string): The PDB ID
-        pdb_data (string): The path to save the PDB files
+        pdb_id (str): The PDB ID
+        pdb_data (str): The path to save the PDB files
     """
     try:
         # Define the URL to download the PDB file
@@ -39,7 +39,7 @@ def get_pdb_id(pdb_csv_file):
     """Function to get the PDB files from the PDB IDs
 
     Args:
-        pdb_csv_file (string): File path to the CSV file containing the PDB IDs
+        pdb_csv_file (str): File path to the CSV file containing the PDB IDs
     """
     # Get the PDB IDs from the CSV file
     with open(pdb_csv_file, "r") as f:
@@ -67,7 +67,7 @@ def preprocess_sequence(pdb_files, pdb_data):
 
     Args:
         pdb_files (list): List of PDB files
-        pdb_data (string): The path to the PDB files
+        pdb_data (str): The path to the PDB files
 
     Returns:
         list: List of sequence records

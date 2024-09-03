@@ -17,7 +17,7 @@ def save_state(state, filename):
 
     Args:
         state (dict): The state to save
-        filename (string): The filename to save the state
+        filename (str): The filename to save the state
     """
     with open(filename, "wb") as f:
         pickle.dump(state, f)
@@ -26,7 +26,7 @@ def load_state(filename):
     """Function to load the state
 
     Args:
-        filename (string): The filename to load the state
+        filename (str): The filename to load the state
 
     Returns:
         state: The loaded state
