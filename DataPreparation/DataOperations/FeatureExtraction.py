@@ -173,14 +173,20 @@ def extract_aligned(path):
     for key in phylo_weights:
         phylo_weights[key] /= total_weight
 
-    # TODO: Figure out how many data points are needed for each feature
+    """
+    TODO: 
+    Figure out how many data points are needed for each feature. Some of the features are 
+    calculated per position, while others are calculated per sequence. Per sequence features
+    will be about 1818, while per position features will be about 2558. Can aggregate the
+    per position features to be the same length as the per sequence features.    
+    """
     # Define the aligned dataframe that will have the calculated feature values
     aligned_data = {
         "ID": [], # 1818
         "Aligned Sequence": [], # 1818
-        "Conservation Scores": positional_conservation_scores * num_sequences,
-        "Consensus Sequence": consensus * num_sequences,
-        "PSSM Scores": pssm_scores * num_sequences,
+        "Conservation Scores": positional_conservation_scores, # 2558
+        "Consensus Sequence": consensus,
+        "PSSM Scores": pssm_scores, # 2558
         "Percentage of Gaps Per Position": perc_gap_per_position, # 2558
         "Positional Entropy": entropy_list, # 2558
         "Phylogenetic Weighting": phylo_weights, # 1818
