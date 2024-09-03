@@ -6,31 +6,80 @@ from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 
 def calculate_a_acid_composition(sequence):
+    """Function to calculate the amino acid composition of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the amino acid composition
+
+    Returns:
+        dict: The dictionary containing the amino acid composition
+    """
     protein_analysis = ProteinAnalysis(sequence)
     aac_dict = protein_analysis.get_amino_acids_percent()
     return aac_dict
 
 def calculate_hydrophobicity(sequence):
+    """Function to calculate the hydrophobicity of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the hydrophobicity
+
+    Returns:
+        float: The hydrophobicity value
+    """
     hydrophobicity_values = ProteinAnalysis(sequence).gravy()
     return hydrophobicity_values
 
 def calculate_polarity(sequence, ph):
+    """Function to calculate the polarity of a sequence at a given pH
+
+    Args:
+        sequence (str): The sequence to calculate the polarity
+        ph (float): The pH value to calculate the polarity, usually 7.0
+
+    Returns:
+        float: The polarity value
+    """
     protein_analysis = ProteinAnalysis(sequence)
     net_charge = protein_analysis.charge_at_pH(ph)
     return net_charge
 
 def calculate_mw(sequence):
+    """Function to calculate the molecular weight of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the molecular weight
+
+    Returns:
+        float: The molecular weight value
+    """
     protein_analysis = ProteinAnalysis(sequence)
     molecular_weight = protein_analysis.molecular_weight()
     return molecular_weight
 
 def calculate_pI(sequence):
+    """Function to calculate the isoelectric point of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the isoelectric point
+
+    Returns:
+        float: The isoelectric point value
+    """
     protein_analysis = ProteinAnalysis(sequence)
     pI = protein_analysis.isoelectric_point()
     return pI
 
 # TODO: Figure out how this function works
 def calculate_dipeptide_composition(sequence):
+    """Function to calculate the dipeptide composition of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the dipeptide composition
+
+    Returns:
+        dict: The dictionary containing the dipeptide composition
+    """
     dipeptides = [sequence[i:i+2] for i in range(len(sequence) - 1)]
     dipeptide_counts = Counter(dipeptides)
     total_dipeptides = sum(dipeptide_counts.values())
@@ -39,6 +88,14 @@ def calculate_dipeptide_composition(sequence):
 
 # FIXME: The values in the propensities dictionary should be replaced with actual values
 def calculate_secondary_structure_propensity(sequence):
+    """Function to calculate the secondary structure propensity of a sequence
+
+    Args:
+        sequence (str): The sequence to calculate the secondary structure propensity
+
+    Returns:
+        tuple: The tuple containing the helix propensity, sheet propensity, and coil propensity
+    """
     # Example propensities (values are illustrative)
     propensities = {
         'H': {'A': 1.45, 'R': 0.97, 'N': 0.67, 'D': 1.01, 'C': 0.77, 'E': 1.53, 'Q': 1.23, 'G': 0.57, 'H': 1.00, 'I': 1.08, 'L': 1.34, 'K': 1.07, 'M': 1.20, 'F': 1.12, 'P': 0.59, 'S': 0.79, 'T': 0.82, 'W': 1.14, 'Y': 0.61, 'V': 1.06},
@@ -52,6 +109,15 @@ def calculate_secondary_structure_propensity(sequence):
 
 # TODO: Figure out if this can be replaced with another tool
 def predict_disorder(sequence, threshold):
+    """Function to predict if a sequence is disordered
+
+    Args:
+        sequence (str): The sequence to predict if it is disordered
+        threshold (float): The threshold to determine if a sequence is disordered, usually 0.5
+
+    Returns:
+        Literal[0, 1]: The value to determine if a sequence is disordered, 1 if disordered, 0 if not
+    """
     disorder_scores = meta.predict_disorder(sequence)
     average_disorder_score = sum(disorder_scores) / len(disorder_scores)
     is_disordered = 1 if average_disorder_score > threshold else 0
