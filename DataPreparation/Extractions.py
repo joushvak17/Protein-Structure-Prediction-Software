@@ -50,7 +50,7 @@ def main():
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
     else:
-        logging.debug("Tree file or state file does not exist. Running Clustal Omega.")
+        logging.debug("Tree file or state file does not exist. Running FastTree.")
         
         # Define the path for the aligned sequences
         aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
@@ -69,7 +69,7 @@ def main():
             logging.error(f"Error: {e}, {e.output}")
             return
         
-        logging.debug("Clustal Omega completed. Will now extract the unaligned sequences.")
+        logging.debug("FastTree completed. Will now extract the unaligned sequences.")
         
         # Define the path for the unaligned sequences
         unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
