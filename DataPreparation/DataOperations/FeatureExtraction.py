@@ -173,6 +173,7 @@ def extract_aligned(path):
     for key in phylo_weights:
         phylo_weights[key] /= total_weight
 
+    # TODO: Figure out how many data points are needed for each feature
     # Define the aligned dataframe that will have the calculated feature values
     aligned_data = {
         "ID": [], # 1818
