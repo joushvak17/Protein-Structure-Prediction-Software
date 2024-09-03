@@ -10,7 +10,7 @@ def extract_unaligned(path):
     """Function to extract the features from the unaligned sequences
 
     Args:
-        path (string): The path to the unaligned sequences
+        path (str): The path to the unaligned sequences
 
     Returns:
         dict: The dictionary containing the extracted features
@@ -87,7 +87,7 @@ def extract_aligned(path):
     """Function to extract the features from the aligned sequences
 
     Args:
-        path (string): The path to the aligned sequences
+        path (str): The path to the aligned sequences
 
     Returns:
         dict: The dictionary containing the extracted features
@@ -156,10 +156,9 @@ def extract_aligned(path):
         entropy = -sum(f * math.log2(f) for f in frequencies if f > 0)
         entropy_list.append(entropy)
     
-    # Read the phylogenetic tree and show it
+    # Read the phylogenetic tree
     tree_file = "DataPreparation/FASTAData/tree.newick"
     tree = Phylo.read(tree_file, "newick")
-    Phylo.draw(tree)
     
     # Create a dictionary to store the phylogenetic weighting
     phylo_weights = {}
@@ -175,7 +174,6 @@ def extract_aligned(path):
         phylo_weights[key] /= total_weight
 
     # Define the aligned dataframe that will have the calculated feature values
-    # TODO: Need to work on the phylogenetic weighting and consensus sequence
     aligned_data = {
         "ID": [], 
         "Aligned Sequence": [],
