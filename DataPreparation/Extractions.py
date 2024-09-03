@@ -49,10 +49,12 @@ def main():
         # Load the saved state
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
+        aligned_data = state["aligned_data"]
     else:
         logging.debug("Tree file or state file does not exist. Running FastTree.")
         
-        # Define the path for the aligned sequences
+        # Define the path for the unaligned and aligned sequences
+        unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
         aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
         
         # Define the command to run FastTree
@@ -69,25 +71,24 @@ def main():
             logging.error(f"Error: {e}, {e.output}")
             return
         
-        logging.debug("FastTree completed. Will now extract the unaligned sequences.")
-        
-        # Define the path for the unaligned sequences
-        unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
+        logging.debug("FastTree completed. Will now extract the sequences.")
     
-        # Extract the unaligned data
+        # Extract the data
         unaligned_data = extract_unaligned(unaligned_path)
+        aligned_data = extract_aligned(aligned_path)
         
         # Save the state
-        state = {"unaligned_data": unaligned_data}
+        state = {
+            "unaligned_data": unaligned_data,
+            "aligned_data": aligned_data
+        }
         save_state(state, STATE_FILE)
         logging.debug("State saved. Please run the script again.")
         return
     
-    # Define the path for the unaligned and aligned sequences
+    # Define the path for the unaligned sequences
     unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
-    aligned_path = "DataPreparation/FASTAData/Aligned_Sequences.fasta"
         
-    aligned_data = extract_aligned(aligned_path)
     label_data = extract_labels(unaligned_path)
 
     # Convert the dictionaries to dataframes

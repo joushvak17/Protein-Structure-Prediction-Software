@@ -185,6 +185,7 @@ def extract_aligned(path):
         "ID": [], # 1818
         "Aligned Sequence": [], # 1818
         "Conservation Scores": positional_conservation_scores, # 2558
+        # TODO: Figure out what the output for the consensus sequence is
         "Consensus Sequence": consensus,
         "PSSM Scores": pssm_scores, # 2558
         "Percentage of Gaps Per Position": perc_gap_per_position, # 2558
