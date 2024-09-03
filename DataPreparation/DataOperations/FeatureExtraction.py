@@ -175,17 +175,17 @@ def extract_aligned(path):
 
     # Define the aligned dataframe that will have the calculated feature values
     aligned_data = {
-        "ID": [], 
-        "Aligned Sequence": [],
+        "ID": [], # 1818
+        "Aligned Sequence": [], # 1818
         "Conservation Scores": positional_conservation_scores * num_sequences,
         "Consensus Sequence": consensus * num_sequences,
         "PSSM Scores": pssm_scores * num_sequences,
-        "Percentage of Gaps Per Position": perc_gap_per_position,
-        "Positional Entropy": entropy_list,
-        "Phylogenetic Weighting": phylo_weights,
-        "Sequence Length": [],
-        "Gap Count": [],
-        "Percentage Gaps": []
+        "Percentage of Gaps Per Position": perc_gap_per_position, # 2558
+        "Positional Entropy": entropy_list, # 2558
+        "Phylogenetic Weighting": phylo_weights, # 1818
+        "Sequence Length": [], # 1818
+        "Gap Count": [], # 1818
+        "Percentage Gaps": [] # 1818
     }
 
     for seq_record in alignment:
