@@ -3,8 +3,10 @@ import requests
 import os
 import urllib3
 import subprocess
+import logging
 
 from retrying import retry
+from tqdm import tqdm
 from Bio.PDB import PDBParser, is_aa, Polypeptide
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -32,7 +34,7 @@ def download_pdb(pdb_id, pdb_data):
             with open(path, "wb") as f:
                 f.write(response.content)
     except urllib3.exceptions.HTTPError as e:
-        print(f"Failed to download PDB file for {pdb_id}: {e}")
+        logging.error(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
 def get_pdb_id(pdb_csv_file):
@@ -41,13 +43,14 @@ def get_pdb_id(pdb_csv_file):
     Args:
         pdb_csv_file (str): File path to the CSV file containing the PDB IDs
     """
+    logging.debug("Getting PDB files from the PDB IDs")
+    
     # Get the PDB IDs from the CSV file
     with open(pdb_csv_file, "r") as f:
         line = f.readline()
         pdb_ids = line.split(",")
 
-    # Print the total number of PDB IDs
-    print("The total length of the IDs in the CSV file is: ", len(pdb_ids))
+    logging.debug(f"The total length of the IDs in the CSV file is: {len(pdb_ids)}")
 
     # Define a directory to save the PDB files
     pdb_data = "DataPreparation/PDBData"
@@ -57,10 +60,12 @@ def get_pdb_id(pdb_csv_file):
         os.makedirs(pdb_data)
     
     # Download all files from PDB using the IDs that were extracted
-    for pdb_id in pdb_ids:
-        download_pdb(pdb_id, pdb_data)
+    with tqdm(total=len(pdb_ids), desc="Downloading PDB files") as pbar:
+        for pdb_id in pdb_ids:
+            download_pdb(pdb_id, pdb_data)
+            pbar.update(1)
     
-    print("The total length of the IDs that were able to be downloaded is: ", len(os.listdir(pdb_data)))
+    logging.debug("The total length of the IDs that were able to be downloaded is: %s", len(os.listdir(pdb_data)))
 
 def preprocess_sequence(pdb_files, pdb_data):
     """Function that will preprocess the sequences
@@ -72,6 +77,8 @@ def preprocess_sequence(pdb_files, pdb_data):
     Returns:
         list: List of sequence records
     """
+    logging.debug("Preprocessing the sequences")
+    
     sequence_records = []
     sequences_seen = set()
     
@@ -116,12 +123,14 @@ def preprocess_sequence(pdb_files, pdb_data):
                                                       description=f"Source File: {pdb_file}, Chain: {chain.id}"))
                     sequences_seen.add(sequence)
 
-    print(f"Found {non_standard_residue_count} non-standard residues")
-    print(f"Found {missing_atom_count} missing atoms")
+    logging.debug((f"Found {non_standard_residue_count} non-standard residues"))
+    logging.debug((f"Found {missing_atom_count} missing atoms"))
 
     return sequence_records
 
 def main():
+    logging.debug("Starting main function")
+    
     # Define the path to the csv file containing the PDB IDs
     pdb_csv_file = "DataPreparation/PDBDataID.csv"
     
@@ -149,10 +158,12 @@ def main():
     out_file = fasta_path + "/Aligned_Sequences.fasta"
     
     if not os.path.exists(in_file):
-        print(f"Error: Input file {in_file} does not exist.")
+        logging.error(f"Error: Input file {in_file} does not exist.")
     elif os.path.getsize(in_file) == 0:
-        print(f"Error: Input file {in_file} is empty.")
+        logging.error(f"Error: Input file {in_file} is empty.")
     else:
+        logging.debug(f"Aligning sequences using Clustal Omega")
+        
         # Define the command to run Clustal Omega
         cmd = [
             "clustalo",
@@ -166,7 +177,7 @@ def main():
         try:
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error: {e}, {e.output}")
+            logging.error(f"Error: {e}, {e.output}")
 
 if __name__ == "__main__":
     main()
