@@ -13,8 +13,10 @@ from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 
 
-# Configure logging
+# Configure logging and siable the logging for the requests library
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
 def download_pdb(pdb_id, pdb_data):
@@ -46,8 +48,6 @@ def get_pdb_id(pdb_csv_file):
     Args:
         pdb_csv_file (str): File path to the CSV file containing the PDB IDs
     """
-    logging.debug("Getting PDB files from the PDB IDs")
-    
     # Get the PDB IDs from the CSV file
     with open(pdb_csv_file, "r") as f:
         line = f.readline()
@@ -80,8 +80,6 @@ def preprocess_sequence(pdb_files, pdb_data):
     Returns:
         list: List of sequence records
     """
-    logging.debug("Preprocessing the sequences")
-    
     sequence_records = []
     sequences_seen = set()
     
@@ -132,8 +130,6 @@ def preprocess_sequence(pdb_files, pdb_data):
     return sequence_records
 
 def main():
-    logging.debug("Starting main function")
-    
     # Define the path to the csv file containing the PDB IDs
     pdb_csv_file = "DataPreparation/PDBDataID.csv"
     
@@ -165,8 +161,6 @@ def main():
     elif os.path.getsize(in_file) == 0:
         logging.error(f"Error: Input file {in_file} is empty.")
     else:
-        logging.debug(f"Aligning sequences using Clustal Omega")
-        
         # Define the command to run Clustal Omega
         cmd = [
             "clustalo",
