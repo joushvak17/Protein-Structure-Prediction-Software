@@ -19,7 +19,7 @@ def extract_data(seq_record):
         parser = PDB.PDBParser(QUIET=True)
         structure = parser.get_structure("protein", pdb_file)
         model = structure[0]
-        dssp = PDB.DSSP(model, pdb_file, dssp="/usr/local/bin/mkdssp")
+        dssp = PDB.DSSP(model, pdb_file, dssp="mkdssp")
         
         # Extract the secondary structure
         secondary_structure = [dssp[key][2] for key in dssp.keys()]
