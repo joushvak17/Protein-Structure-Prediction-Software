@@ -13,6 +13,9 @@ from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
 def download_pdb(pdb_id, pdb_data):
     """Function that will download the PDB files
