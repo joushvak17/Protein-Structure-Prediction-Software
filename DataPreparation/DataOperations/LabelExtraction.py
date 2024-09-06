@@ -15,7 +15,7 @@ def extract_labels(path):
                   "Solvent Accessibility": [],
                   "Disorder Regions": []}
     
-    seq_record = SeqIO.read(path, "fasta")
+    seq_record = SeqIO.parse(path, "fasta")
     
     with (ThreadPoolExecutor() as executor):
         for secondary_structure, solvent_accessibility, disorder_regions in executor.map(extract_data, seq_record):
