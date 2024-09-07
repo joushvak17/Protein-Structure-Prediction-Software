@@ -35,8 +35,6 @@ def load_state(filename):
         return pickle.load(f)
 
 def main():
-    logging.debug("Starting main function")
-    
     # Define the tree file
     TREE_FILE = "DataPreparation/FASTAData/tree.newick"
 
@@ -117,7 +115,8 @@ def main():
     df.to_csv("DataPreparation/Features.csv", index=False)
     
     # Save the final state
-    state = {"aligned_data": aligned_data, 
+    state = {"unaligned_data": unaligned_data, 
+             "aligned_data": aligned_data, 
              "label_data": label_data,
              "df": df}
     save_state(state, STATE_FILE)
