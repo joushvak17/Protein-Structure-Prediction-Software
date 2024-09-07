@@ -112,7 +112,7 @@ def main():
     logging.debug(f"Length of the dataframe: {len(df)}")
 
     # Save the dataframe to a csv file
-    df.to_csv("DataPreparation/Features.csv", index=False)
+    df.to_csv("DataPreparation/Data.csv", index=False)
     
     # Save the final state
     state = {"unaligned_data": unaligned_data, 
