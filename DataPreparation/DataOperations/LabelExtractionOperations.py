@@ -1,5 +1,6 @@
 # Import the needed libraries
 from Bio import PDB
+from Bio.PDB.DSSP import dssp_dict_from_pdb_file
 
 
 def extract_data(seq_record):
@@ -16,8 +17,12 @@ def extract_data(seq_record):
         base_pdb_id = seq_id.split("_")[0]
         pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
         
+        dssp_tuple = dssp_dict_from_pdb_file(pdb_file)
+        print(dssp_tuple[0])
+        
         parser = PDB.PDBParser(QUIET=True)
-        structure = parser.get_structure("protein", pdb_file)
+        # FIXME: Check to see if these are the arguments to pass to the parser
+        structure = parser.get_structure(base_pdb_id, pdb_file)
         model = structure[0]
         dssp = PDB.DSSP(model, pdb_file, dssp="mkdssp")
         
