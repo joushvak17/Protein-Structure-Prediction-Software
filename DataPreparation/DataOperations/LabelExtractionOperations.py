@@ -17,15 +17,14 @@ def extract_data(seq_record):
         base_pdb_id = seq_id.split("_")[0]
         pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
         
-        # TODO: Figure out how to get the DSSP dict output
-        dssp_tuple = dssp_dict_from_pdb_file(pdb_file, DSSP="mkdssp")
-        print(dssp_tuple[0])
-        
-        parser = PDB.PDBParser(QUIET=True)
+        parser = PDB.PDBParser() # Might need to pass QUIET=True
         # FIXME: Check to see if these are the arguments to pass to the parser
         structure = parser.get_structure(base_pdb_id, pdb_file)
         model = structure[0]
         dssp = PDB.DSSP(model, pdb_file, dssp="mkdssp")
+        
+        a_key = list(dssp.keys())[0]
+        print(dssp[a_key])
         
         # Extract the secondary structure
         secondary_structure = [dssp[key][2] for key in dssp.keys()]
