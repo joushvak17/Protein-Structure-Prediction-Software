@@ -31,12 +31,11 @@ def generate_dssp(pdb_files, pdb_data) -> None:
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error: {e}, {e.output}")
-            continue
         
         # Check which DSSP file was not generated
         if not os.path.exists(dssp_file):
             print(f"Failed to generate DSSP file for {pdb_file}")
-
+            
 def main() -> None:
     # Process the PDB files
     pdb_data = "DataPreparation/PDBData"
