@@ -1,6 +1,7 @@
 # Import the needed libraries
 import os
 import subprocess
+from tqdm import tqdm
 
 
 def generate_dssp(pdb_files, pdb_data) -> None:
@@ -15,26 +16,29 @@ def generate_dssp(pdb_files, pdb_data) -> None:
         os.mkdir("DataPreparation/DSSPData")
     
     # Generate the DSSP files, looping through the PDB files
-    for pdb_file in pdb_files:
-        # Define the DSSP file and PDB file
-        dssp_file = f"DataPreparation/DSSPData/{pdb_file}.dssp"
-        pdb_file = f"{pdb_data}/{pdb_file}.pdb"
-        
-        # Generate the DSSP file
-        cmd = [
-            "mkdssp",
-            pdb_file,
-            dssp_file
-        ]
-        
-        try:
-            subprocess.run(cmd, check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error: {e}, {e.output}")
-        
-        # Check which DSSP file was not generated
-        if not os.path.exists(dssp_file):
-            print(f"Failed to generate DSSP file for {pdb_file}")
+    with tqdm(total=len(pdb_files), desc="Generating DSSP files") as pbar:
+        for pdb_file in pdb_files:
+            # Define the DSSP file and PDB file
+            dssp_file = f"DataPreparation/DSSPData/{pdb_file}.dssp"
+            pdb_file = f"{pdb_data}/{pdb_file}.pdb"
+            
+            # Generate the DSSP file
+            cmd = [
+                "mkdssp",
+                pdb_file,
+                dssp_file
+            ]
+            
+            try:
+                subprocess.run(cmd, check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Error: {e}, {e.output}")
+            
+            # Check which DSSP file was not generated
+            if not os.path.exists(dssp_file):
+                print(f"Failed to generate DSSP file for {pdb_file}")
+            
+            pbar.update(1)
             
 def main() -> None:
     # Process the PDB files
