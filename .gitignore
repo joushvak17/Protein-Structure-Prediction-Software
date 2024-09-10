@@ -1,6 +1,7 @@
 # Folders
 DataPreparation/PDBData
 DataPreparation/FASTAData
+DataPreparation/DSSPData
 
 # Misc
 .vscode
