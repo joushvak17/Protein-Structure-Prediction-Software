@@ -18,7 +18,7 @@ def extract_data(seq_record):
         pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
         
         # TODO: Figure out how to get the DSSP dict output
-        dssp_tuple = dssp_dict_from_pdb_file(pdb_file)
+        dssp_tuple = dssp_dict_from_pdb_file(pdb_file, DSSP="mkdssp")
         print(dssp_tuple[0])
         
         parser = PDB.PDBParser(QUIET=True)
