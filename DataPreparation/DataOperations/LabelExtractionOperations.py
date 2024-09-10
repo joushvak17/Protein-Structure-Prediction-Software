@@ -1,7 +1,6 @@
 # Import the needed libraries
-from Bio import PDB
-from Bio.PDB.DSSP import dssp_dict_from_pdb_file
-
+from Bio.PDB import PDBParser
+from Bio.PDB.DSSP import DSSP
 
 def extract_data(seq_record):
     """Function to extract the labels from the PDB file
@@ -17,11 +16,11 @@ def extract_data(seq_record):
         base_pdb_id = seq_id.split("_")[0]
         pdb_file = f"DataPreparation/PDBData/{base_pdb_id}.pdb"
         
-        parser = PDB.PDBParser(QUIET=True)
+        parser = PDBParser(QUIET=True)
         # FIXME: Check to see if these are the arguments to pass to the parser
         structure = parser.get_structure(base_pdb_id, pdb_file)
         model = structure[0]
-        dssp = PDB.DSSP(model, pdb_file, dssp="mkdssp")
+        dssp = DSSP(model, pdb_file, dssp="mkdssp")
         
         a_key = list(dssp.keys())
         print(f"DSSP keys for {base_pdb_id}: {a_key}")

@@ -19,7 +19,7 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 @retry(stop_max_attempt_number=5, wait_fixed=2000)
-def download_pdb(pdb_id, pdb_data):
+def download_pdb(pdb_id, pdb_data) -> None:
     """Function that will download the PDB files
 
     Args:
@@ -42,7 +42,7 @@ def download_pdb(pdb_id, pdb_data):
         logging.error(f"Failed to download PDB file for {pdb_id}: {e}")
         raise
 
-def get_pdb_id(pdb_csv_file):
+def get_pdb_id(pdb_csv_file) -> None:
     """Function to get the PDB files from the PDB IDs
 
     Args:
@@ -70,7 +70,7 @@ def get_pdb_id(pdb_csv_file):
     
     logging.debug("The total length of the IDs that were able to be downloaded is: %s", len(os.listdir(pdb_data)))
 
-def preprocess_sequence(pdb_files, pdb_data):
+def preprocess_sequence(pdb_files, pdb_data) -> list:
     """Function that will preprocess the sequences
 
     Args:
@@ -129,7 +129,7 @@ def preprocess_sequence(pdb_files, pdb_data):
 
     return sequence_records
 
-def main():
+def main() -> None:
     # Define the path to the csv file containing the PDB IDs
     pdb_csv_file = "DataPreparation/PDBDataID.csv"
     
