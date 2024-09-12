@@ -25,14 +25,6 @@ def extract_data(seq_record):
             model = structure[0]
             dssp = DSSP(model, dssp_file, dssp="mkdssp", file_type="DSSP")
             
-            # TODO: Remove these check statements and add values to the tuple
-            a_key = list(dssp.keys())
-            print(f"DSSP keys for {base_pdb_id}: {a_key}")
-            
-            if not a_key:
-                print(f"No DSSP keys found for {base_pdb_id}, possible issue with PDB or DSSP")
-                return None, None, None
-            
             # Extract the secondary structure
             secondary_structure = [dssp[key][2] for key in dssp.keys()]
             
