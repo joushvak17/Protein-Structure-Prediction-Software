@@ -36,6 +36,9 @@ def extract_data(seq_record):
                         
             return secondary_structure, solvent_accessibility, disorder_regions
         else:
+            # If the DSSP file does not exist, remove the PDB file and return None
+            if os.path.exists(pdb_file):
+                os.remove(pdb_file)
             return None, None, None
     except ValueError:
         return None, None, None
