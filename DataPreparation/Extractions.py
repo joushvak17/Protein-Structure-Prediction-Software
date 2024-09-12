@@ -93,32 +93,16 @@ def main():
     unaligned_df = pd.DataFrame(unaligned_data)
     aligned_df = pd.DataFrame(aligned_data)
     label_df = pd.DataFrame(label_data)
-
-    # Concatenate the dataframes
-    df = pd.concat([unaligned_df, aligned_df, label_df], axis=1)
     
-    # Remove the rows with missing values
-    df.dropna(inplace=True)
-
-    # Encode the experimental methods and normalize the data
-    le = LabelEncoder()
-    df["Experimental"] = le.fit_transform(df["Experimental"])
-
-    scaler = StandardScaler()
-    num_cols = df.select_dtypes(include=["int64", "float64"]).columns
-    df[num_cols] = scaler.fit_transform(df[num_cols])
-
-    # Print the length of the dataframe
-    logging.debug(f"Length of the dataframe: {len(df)}")
-
-    # Save the dataframe to a csv file
-    df.to_csv("DataPreparation/Data.csv", index=False)
+    # Save the dataframes to csv files
+    unaligned_df.to_csv("DataPreparation/CSVData/UnalignedData.csv", index=False)
+    aligned_df.to_csv("DataPreparation/CSVData/AlignedData.csv", index=False)
+    label_df.to_csv("DataPreparation/CSVData/LabelData.csv", index=False)
     
     # Save the final state
     state = {"unaligned_data": unaligned_data, 
              "aligned_data": aligned_data, 
-             "label_data": label_data,
-             "df": df}
+             "label_data": label_data}
     save_state(state, STATE_FILE)
     logging.debug("Final state saved.")
 
