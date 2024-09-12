@@ -92,6 +92,10 @@ def main():
     aligned_df = pd.DataFrame(aligned_data)
     label_df = pd.DataFrame(label_data)
     
+    # Create a save folder
+    if not os.path.exists("DataPreparation/CSVData"):
+        os.makedirs("DataPreparation/CSVData")
+    
     # Save the dataframes to csv files
     unaligned_df.to_csv("DataPreparation/CSVData/UnalignedData.csv", index=False)
     aligned_df.to_csv("DataPreparation/CSVData/AlignedData.csv", index=False)
