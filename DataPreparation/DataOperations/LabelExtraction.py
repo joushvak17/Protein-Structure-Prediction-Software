@@ -22,3 +22,5 @@ def extract_labels(path):
             label_data["Secondary Structure"].append(secondary_structure)
             label_data["Solvent Accessibility"].append(solvent_accessibility)
             label_data["Disorder Regions"].append(disorder_regions)
+            
+    return label_data
