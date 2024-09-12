@@ -36,7 +36,6 @@ def extract_data(seq_record):
                         
             return secondary_structure, solvent_accessibility, disorder_regions
         else:
-            print(f"DSSP file {dssp_file} does not exist")
             return None, None, None
     except ValueError:
         return None, None, None
