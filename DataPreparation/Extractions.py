@@ -48,6 +48,7 @@ def main():
         state = load_state(STATE_FILE)
         unaligned_data = state["unaligned_data"]
         aligned_data = state["aligned_data"]
+        label_data = state["label_data"]
     else:
         logging.debug("Tree file or state file does not exist. Running FastTree.")
         
@@ -74,21 +75,18 @@ def main():
         # Extract the data
         unaligned_data = extract_unaligned(unaligned_path)
         aligned_data = extract_aligned(aligned_path)
+        label_data = extract_labels(unaligned_path)
         
         # Save the state
         state = {
             "unaligned_data": unaligned_data,
-            "aligned_data": aligned_data
+            "aligned_data": aligned_data,
+            "label_data": label_data
         }
         save_state(state, STATE_FILE)
         logging.debug("State saved. Please run the script again.")
         return
     
-    # Define the path for the unaligned sequences
-    unaligned_path = "DataPreparation/FASTAData/Sequences.fasta"
-        
-    label_data = extract_labels(unaligned_path)
-
     # Convert the dictionaries to dataframes
     unaligned_df = pd.DataFrame(unaligned_data)
     aligned_df = pd.DataFrame(aligned_data)
@@ -98,13 +96,6 @@ def main():
     unaligned_df.to_csv("DataPreparation/CSVData/UnalignedData.csv", index=False)
     aligned_df.to_csv("DataPreparation/CSVData/AlignedData.csv", index=False)
     label_df.to_csv("DataPreparation/CSVData/LabelData.csv", index=False)
-    
-    # Save the final state
-    state = {"unaligned_data": unaligned_data, 
-             "aligned_data": aligned_data, 
-             "label_data": label_data}
-    save_state(state, STATE_FILE)
-    logging.debug("Final state saved.")
 
 if __name__ == "__main__":
     main()
