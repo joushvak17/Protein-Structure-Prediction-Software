@@ -21,17 +21,15 @@ def main():
     # Fix the PDB file
     fixer = PDBFixer(filename=pdb_file)
     
-    # TODO: Some force fields do not recognize certain residues. Will have to find a workaround for this
-    # Replace residues
-    for residue in fixer.topology.residues():
-        if residue.name == 'MSE':
-            residue.name = 'MET'
-        elif residue.name == 'NAP':
-            residue.name = 'NAD'
-        elif residue.name == 'B10':
-            residue.name = 'ALA'
-    
     fixer.findMissingResidues()
+    
+    # TODO: Some force fields do not recognize certain residues. Will have to find a workaround for this
+    # Replace residues with the most common residue, in this case ALA
+    fixer.findNonstandardResidues()
+    fixer.nonstandardResidues = [(residue, 'ALA') for residue, replacement in fixer.nonstandardResidues]
+    fixer.replaceNonstandardResidues()
+    
+    fixer.removeHeterogens()
     fixer.findMissingAtoms()
     fixer.addMissingAtoms()
     fixer.addMissingHydrogens()
@@ -64,7 +62,7 @@ def main():
                                      nonbondedCutoff=unit.Quantity(value=1.0, unit=unit.nano*unit.meters))
 
     # Set up the integrator
-    integrator = LangevinIntegrator(300*unit.kelvin, 1/unit.pico*unit.seconds, 0.002*unit.pico*unit.seconds)
+    integrator = LangevinIntegrator(300*unit.kelvin, 1/(unit.pico*unit.seconds), 0.002*(unit.pico*unit.seconds))
 
     # Create the simulation
     simulation = app.Simulation(pdb.topology, system, integrator)
