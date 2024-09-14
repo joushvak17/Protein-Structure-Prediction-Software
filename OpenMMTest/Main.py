@@ -1,14 +1,22 @@
 # Import the needed libraries
 import sys
+import os
+import random
 
 from openmm import *
 from openmm import app
 
-# Load the PDB file
-pdb_file = 'your_structure.pdb'  # Replace with your PDB file path
-pdb = app.PDBFile(pdb_file)
+# Load a PDB file from the DataOperations/PDBData folder
+folder_path = "DataOperations/PDBData"
 
-# Create a force field
+# Randomly select a file from the list
+random_file = random.choice(os.listdir(folder_path))
+
+# Construct the full file path
+pdb_file = os.path.join(folder_path, random_file)
+
+# Load the PDB file
+pdb = app.PDBFile(pdb_file)# Create a force field
 forcefield = app.ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
 
 # Create the system
