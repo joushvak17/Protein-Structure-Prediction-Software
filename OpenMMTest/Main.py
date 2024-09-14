@@ -85,6 +85,7 @@ def main():
     print("Running simulation...")
     simulation.step(1000)  # Adjust the number of steps as needed
     
+    # FIXME: Figure out the PyMol installation issue
     # Visualize using PyMol
     pymol.finish_launching()
     pymol.cmd.load(output_pdb)
