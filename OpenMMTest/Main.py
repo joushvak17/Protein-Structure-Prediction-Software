@@ -6,6 +6,7 @@ import random
 from openmm import *
 from openmm import app
 from openmm import unit
+from pdbfixer import PDBFixer
 
 def main():
     # Load a PDB file from the DataPreparation/PDBData folder
@@ -16,9 +17,30 @@ def main():
 
     # Construct the full file path
     pdb_file = os.path.join(folder_path, random_file)
+    
+    # Fix the PDB file
+    fixer = PDBFixer(filename=pdb_file)
+    
+    # Replace MSE residues with MET
+    for residue in fixer.topology.residues():
+        if residue.name == 'MSE':
+            residue.name = 'MET'
+    
+    fixer.findMissingResidues()
+    fixer.findMissingAtoms()
+    fixer.addMissingAtoms()
+    fixer.addMissingHydrogens()
+    
+    # Create a folder to store the fixed PDB files
+    if not os.path.exists('OpenMMTest/FixedPDBData'):
+        os.makedirs('OpenMMTest/FixedPDBData')
+    
+    # Save the fixed PDB file
+    fixed_pdb_file = 'OpenMMTest/FixedPDBData/fixed_' + random_file
+    app.PDBFile.writeFile(fixer.topology, fixer.positions, open(fixed_pdb_file, 'w'))
 
     # Load the PDB file
-    pdb = app.PDBFile(pdb_file) 
+    pdb = app.PDBFile(fixed_pdb_file) 
     
     # NOTE: For now go with a set force field. Ask the user what type of force field they want to use
     # force_field = input("Which force field would you like to use? (amber14-all.xml, charmm36.xml, or oplsaa.xml): ")
