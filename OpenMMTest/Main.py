@@ -19,8 +19,14 @@ def main():
     # Load the PDB file
     pdb = app.PDBFile(pdb_file) 
     
-    # Create a force field
-    forcefield = app.ForceField('amber14-all.xml', 'amber14/tip3pfb.xml')
+    # Ask the user what type of force field they want to use
+    force_field = input("Which force field would you like to use? (amber14-all.xml, charmm36.xml, or oplsaa.xml): ")
+
+    # Ask the user what type of water model they want to use
+    water_model = input("Which water model would you like to use? (tip3pfb.xml, tip4pew.xml, or spce.xml): ")
+    
+    # Create a force field, first file is the force field, second file is the water model
+    forcefield = app.ForceField(force_field, water_model)
 
     # Create the system
     system = forcefield.createSystem(pdb.topology, nonbondedCutoff=1.0*nanometers)
