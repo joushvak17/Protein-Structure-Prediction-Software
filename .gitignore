@@ -3,6 +3,9 @@ DataPreparation/PDBData
 DataPreparation/FASTAData
 DataPreparation/DSSPData
 
+# Files
+DataPreparation/state.pkl
+
 # Misc
 .vscode
 __pycache__
