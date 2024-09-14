@@ -174,26 +174,26 @@ def extract_aligned(path):
         phylo_weights[key] /= total_weight
 
     """
-    TODO: 
+    FIXME: 
     Figure out how many data points are needed for each feature. Some of the features are 
     calculated per position, while others are calculated per sequence. Per sequence features
-    will be about 1818, while per position features will be about 2558. Can aggregate the
+    will be about 6097, while per position features will be about 5898. Can aggregate the
     per position features to be the same length as the per sequence features.    
     """
     # Define the aligned dataframe that will have the calculated feature values
     aligned_data = {
-        "ID": [], # 1818
-        "Aligned Sequence": [], # 1818
-        "Conservation Scores": positional_conservation_scores, # 2558
+        "ID": [], # 6097
+        "Aligned Sequence": [], # 6097
+        "Conservation Scores": positional_conservation_scores, # 5898
         # TODO: Figure out what the output for the consensus sequence is
         "Consensus Sequence": consensus,
-        "PSSM Scores": pssm_scores, # 2558
-        "Percentage of Gaps Per Position": perc_gap_per_position, # 2558
-        "Positional Entropy": entropy_list, # 2558
-        "Phylogenetic Weighting": phylo_weights, # 1818
-        "Sequence Length": [], # 1818
-        "Gap Count": [], # 1818
-        "Percentage Gaps": [] # 1818
+        "PSSM Scores": pssm_scores, # 5898
+        "Percentage of Gaps Per Position": perc_gap_per_position, # 5898
+        "Positional Entropy": entropy_list, # 5898
+        "Phylogenetic Weighting": phylo_weights, # 6097
+        "Sequence Length": [], # 6097
+        "Gap Count": [], # 6097
+        "Percentage Gaps": [] # 6097
     }
 
     for seq_record in alignment:
