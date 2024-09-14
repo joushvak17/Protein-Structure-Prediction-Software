@@ -21,10 +21,15 @@ def main():
     # Fix the PDB file
     fixer = PDBFixer(filename=pdb_file)
     
-    # Replace MSE residues with MET
+    # TODO: Some force fields do not recognize certain residues. Will have to find a workaround for this
+    # Replace residues
     for residue in fixer.topology.residues():
         if residue.name == 'MSE':
             residue.name = 'MET'
+        elif residue.name == 'NAP':
+            residue.name = 'NAD'
+        elif residue.name == 'B10':
+            residue.name = 'ALA'
     
     fixer.findMissingResidues()
     fixer.findMissingAtoms()
@@ -46,19 +51,20 @@ def main():
     # force_field = input("Which force field would you like to use? (amber14-all.xml, charmm36.xml, or oplsaa.xml): ")
     force_field = 'amber14-all.xml'
 
-    # NOTE: For no go with a set water model. Ask the user what type of water model they want to use
+    # NOTE: For now go with a set water model. Ask the user what type of water model they want to use
     # water_model = input("Which water model would you like to use? (tip3pfb.xml, tip4pew.xml, or spce.xml): ")
     water_model = 'amber14/tip3pfb.xml'
     
     # Create a force field, first file is the force field, second file is the water model
     forcefield = app.ForceField(force_field, water_model)
 
-    # TODO: Will need to fix the PDB files first
     # Create the system
-    system = forcefield.createSystem(topology=pdb.topology, nonbondedMethod=app.PME, nonbondedCutoff=unit.Quantity(value=1.0, unit=unit.nano*unit.meters))
+    system = forcefield.createSystem(topology=pdb.topology, 
+                                     nonbondedMethod=app.PME, 
+                                     nonbondedCutoff=unit.Quantity(value=1.0, unit=unit.nano*unit.meters))
 
     # Set up the integrator
-    integrator = LangevinIntegrator(300*kelvin, 1/picosecond, 0.002*picoseconds)
+    integrator = LangevinIntegrator(300*unit.kelvin, 1/unit.pico*unit.seconds, 0.002*unit.pico*unit.seconds)
 
     # Create the simulation
     simulation = app.Simulation(pdb.topology, system, integrator)
