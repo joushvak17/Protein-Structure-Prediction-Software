@@ -75,12 +75,12 @@ def main():
     simulation.minimizeEnergy()
 
     # Set up the reporter to save the trajectory
-    simulation.reporters.append(app.DCDReporter('output.dcd', 1000))
-    simulation.reporters.append(app.StateDataReporter(sys.stdout, 1000, step=True, potentialEnergy=True, temperature=True))
+    simulation.reporters.append(app.PDBReporter('OpenMMTest/output.pdb', 100))
+    simulation.reporters.append(app.StateDataReporter(sys.stdout, 100, step=True, potentialEnergy=True, temperature=True))
 
     # Run the simulation
     print("Running simulation...")
-    simulation.step(10000)  # Adjust the number of steps as needed
+    simulation.step(1000)  # Adjust the number of steps as needed
 
 if __name__ == "__main__":
     main()
