@@ -2,6 +2,7 @@
 import sys
 import os
 import random
+import pymol
 
 from openmm import *
 from openmm import app
@@ -73,14 +74,23 @@ def main():
     # Minimize energy
     print("Minimizing energy...")
     simulation.minimizeEnergy()
+    
+    output_pdb = 'OpenMMTest/output.pdb'
 
     # Set up the reporter to save the trajectory
-    simulation.reporters.append(app.PDBReporter('OpenMMTest/output.pdb', 100))
+    simulation.reporters.append(app.PDBReporter(output_pdb, 100))
     simulation.reporters.append(app.StateDataReporter(sys.stdout, 100, step=True, potentialEnergy=True, temperature=True))
 
     # Run the simulation
     print("Running simulation...")
     simulation.step(1000)  # Adjust the number of steps as needed
+    
+    # Visualize using PyMol
+    pymol.finish_launching()
+    pymol.cmd.load(output_pdb)
+    pymol.cmd.show("cartoon")
+    pymol.cmd.color("cyan", "all")
+    pymol.cmd.zoom("all")
 
 if __name__ == "__main__":
     main()
