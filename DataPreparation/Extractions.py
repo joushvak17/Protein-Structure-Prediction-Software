@@ -86,18 +86,18 @@ def main():
         logging.debug("State saved. Please run the script again.")
         return
     
-    # Convert the dictionaries to dataframes
-    unaligned_df = pd.DataFrame(unaligned_data)
-    aligned_df = pd.DataFrame(aligned_data)
-    label_df = pd.DataFrame(label_data)
-    
     # Create a save folder
     if not os.path.exists("DataPreparation/CSVData"):
         os.makedirs("DataPreparation/CSVData")
     
-    # Save the dataframes to csv files
+    # Convert the dictionaries to dataframes and save them to csv files
+    unaligned_df = pd.DataFrame(unaligned_data)
     unaligned_df.to_csv("DataPreparation/CSVData/UnalignedData.csv", index=False)
+    
+    aligned_df = pd.DataFrame(aligned_data)
     aligned_df.to_csv("DataPreparation/CSVData/AlignedData.csv", index=False)
+    
+    label_df = pd.DataFrame(label_data)
     label_df.to_csv("DataPreparation/CSVData/LabelData.csv", index=False)
 
 if __name__ == "__main__":
