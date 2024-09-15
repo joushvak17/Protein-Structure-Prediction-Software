@@ -3,6 +3,7 @@ DataPreparation/PDBData
 DataPreparation/FASTAData
 DataPreparation/DSSPData
 OpenMMTest/FixedPDBData
+OpenMMTest/OutputPDBData
 
 # Files
 DataPreparation/state.pkl

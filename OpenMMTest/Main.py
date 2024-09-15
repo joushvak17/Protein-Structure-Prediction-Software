@@ -27,7 +27,7 @@ def main():
     # TODO: Some force fields do not recognize certain residues. Will have to find a workaround for this
     # Replace residues with the most common residue, in this case ALA
     fixer.findNonstandardResidues()
-    fixer.nonstandardResidues = [(residue, 'ALA') for residue, replacement in fixer.nonstandardResidues]
+    fixer.nonstandardResidues = [(residue, 'ALA') for residue, _ in fixer.nonstandardResidues]
     fixer.replaceNonstandardResidues()
     
     fixer.removeHeterogens()
@@ -75,6 +75,10 @@ def main():
     print("Minimizing energy...")
     simulation.minimizeEnergy()
     
+    # Create a folder to store the output PDB files
+    if not os.path.exists('OpenMMTest/OutputPDBData'):
+        os.makedirs('OpenMMTest/OutputPDBData')
+    
     output_pdb = 'OpenMMTest/OutputPDBData/output_' + random_file
 
     # Set up the reporter to save the trajectory
@@ -85,7 +89,6 @@ def main():
     print("Running simulation...")
     simulation.step(1000)  # Adjust the number of steps as needed
     
-    # FIXME: Figure out the PyMol installation issue
     # Visualize using PyMol
     pymol.finish_launching()
     pymol.cmd.load(output_pdb)
