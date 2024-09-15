@@ -75,7 +75,7 @@ def main():
     print("Minimizing energy...")
     simulation.minimizeEnergy()
     
-    output_pdb = 'OpenMMTest/output.pdb'
+    output_pdb = 'OpenMMTest/OutputPDBData/output_' + random_file
 
     # Set up the reporter to save the trajectory
     simulation.reporters.append(app.PDBReporter(output_pdb, 100))
