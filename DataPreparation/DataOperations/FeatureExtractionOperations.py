@@ -1,5 +1,6 @@
 # Import the needed libraries
-import metapredict as meta
+# TODO: Import the metapredict library when it is available
+# import metapredict as meta
 
 from collections import Counter
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
@@ -107,18 +108,18 @@ def calculate_secondary_structure_propensity(sequence):
     coil_propensity = sum(propensities['C'].get(aa, 0) for aa in sequence) / len(sequence)
     return helix_propensity, sheet_propensity, coil_propensity
 
-# TODO: Figure out if this can be replaced with another tool
-def predict_disorder(sequence, threshold):
-    """Function to predict if a sequence is disordered
+# # TODO: Figure out if this can be replaced with another tool
+# def predict_disorder(sequence, threshold):
+#     """Function to predict if a sequence is disordered
 
-    Args:
-        sequence (str): The sequence to predict if it is disordered
-        threshold (float): The threshold to determine if a sequence is disordered, usually 0.5
+#     Args:
+#         sequence (str): The sequence to predict if it is disordered
+#         threshold (float): The threshold to determine if a sequence is disordered, usually 0.5
 
-    Returns:
-        Literal[0, 1]: The value to determine if a sequence is disordered, 1 if disordered, 0 if not
-    """
-    disorder_scores = meta.predict_disorder(sequence)
-    average_disorder_score = sum(disorder_scores) / len(disorder_scores)
-    is_disordered = 1 if average_disorder_score > threshold else 0
-    return is_disordered
+#     Returns:
+#         Literal[0, 1]: The value to determine if a sequence is disordered, 1 if disordered, 0 if not
+#     """
+#     disorder_scores = meta.predict_disorder(sequence)
+#     average_disorder_score = sum(disorder_scores) / len(disorder_scores)
+#     is_disordered = 1 if average_disorder_score > threshold else 0
+#     return is_disordered
