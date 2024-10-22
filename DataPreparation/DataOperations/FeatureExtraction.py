@@ -33,7 +33,7 @@ def extract_unaligned(path):
         "Helix Propensity": [],
         "Sheet Propensity": [],
         "Coil Propensity": [],
-        # "Disorder Prediction": []
+        "Disorder Prediction": []
     } 
 
     for seq_record in SeqIO.parse(path, "fasta"):
@@ -76,9 +76,9 @@ def extract_unaligned(path):
         unaligned_data["Sheet Propensity"].append(sheet_propensity)
         unaligned_data["Coil Propensity"].append(coil_propensity)
         
-        # # Disorder Prediction
-        # disorder_prediction = predict_disorder(seq_record.seq, 0.5)
-        # unaligned_data["Disorder Prediction"].append(disorder_prediction)   
+        # Disorder Prediction
+        disorder_prediction = predict_disorder(seq_record.seq, 0.5)
+        unaligned_data["Disorder Prediction"].append(disorder_prediction)   
         
     return unaligned_data
 
